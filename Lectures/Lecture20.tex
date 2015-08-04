@@ -1,0 +1,69 @@
+\chapter{Lecture 20}
+\lhead{March 2, 2015}
+\chead{21-366 Lambda Calculus Lecture 20}
+\rhead{Brian Jacobs}
+
+\section{Closure of Strong Normalizable Terms Under Substitution}
+We would like to show that for any strongly normalizable terms $X,Y$, the substitution $[Y/y]X$ is also strongly normalizable.
+
+\subsection{Proof}
+We can prove the claim by induction on the tuple $(p,r,t,\ell)$, where
+\begin{center}
+  \begin{tabular}{c l}
+    $p$ & is the last integer in the potential of $Y$\\
+    $r$ & is the size of the reduction tree of $Y$\\
+    $t$ & is the size of the reduction tree of $X$\\
+    $\ell$ & is the size of $X$\\
+  \end{tabular}
+\end{center}
+\margnot{Lexicographic Ordering}{ Remember our definition of a lexicographic ordering from before. It allows us to induct on the tuple $(p,r,t,\ell)$ by giving us a formal description of when the tuple is getting ``smaller.''}
+
+There are three options for the term $X$. It can either start with a variable $z$ which is not being substituted, a lambda term, or a variable $y$ which is being substituted.
+\begin{eqnarray*}
+  X &=& zX_1\ldots X_n\\
+  X &=& (\l zZ)X_1\ldots X_n\\
+  X &=& yX_1\ldots X_n\\
+\end{eqnarray*}
+
+For our third case, we have $[Y/y](X) = Y([Y/y]X_1)\ldots([Y/y]X_n)$. These $n + 1$ are in SN. We find the principle redex of $\Delta$ if $\Delta$ is a subterm of the first occurance of $Y$. We contract $\Delta$ in $Y$ to give $Y'$, so $\omega([Y/y]X_1)\ldots([Y/y]X_n)$, which is in SN by induction hypothesis on $r$. Note that this operation might increase $\ell$ or $t$, but it definitely reduces $r$ and does not affect $p$.\\
+
+We have one more case: $Y = \l zZ$. We then have
+\begin{eqnarray*}
+  x = (y^{p,\alpha,m}X_1^{\beta,m})^{m,\gamma}\ldots
+  Y &=& (\l z^s Z^{\delta,s})^{s + 1,\mu,p}
+\end{eqnarray*}
+let $[Y/y]X_1^{\beta,m}$ be $Z_1^{\beta,m}$. Then
+\begin{eqnarray*}
+  (\l z^sZ^{\delta,s})^{s+1,\mu,p,\alpha,m+1}Z_1^{\beta,m}
+\end{eqnarray*}
+We know that $Z_1$ is in SN by the induction hypothesis. Suppose $s + 1 = p$. Then we are substituting something with a last potential $p - 1$. Which would be nice, if it were true.\\
+
+In case the potential $s+1,\mu,p,\alpha,m+1$ has a $0$ in it, it is not a principle redex. Then we get strong normalization from the induction hypothesis. Similarly, if $z \not\in \FV(Z)$ we also get strong normalization.\\
+
+\textbf{Definition:} Shift and Rotate are funtions from potentials without zeros to potentials. The point of these functions is that: $(U^{p,\alpha} V^\beta)^\gamma$ potential reduces to $(U^{\beta} V^\delta)^\mu$ where $\delta = \beta$ rotate$(p,\alpha)$ and $\mu =$ shift$(p,\alpha)\gamma$.
+
+{
+  \def\rotate{\hbox{rotate}}
+  \def\shift{\hbox{shift}}
+  \begin{eqnarray*}
+    \rotate(p) &=& \hbox{empty sequence}\\
+    \shift(p) &=& \hbox{empty sequence}\\
+    \rotate(\alpha,q+2,q+1) &=& q+1,\rotate(\alpha,q+2)\\
+    \rotate(\alpha,q+1,q+2) &=& q, \rotate(\alpha,q+1)\\
+    \shift(\alpha,q+2,q+1) &=& \shift(\alpha,q+2)q+1\\
+    \shift(\alpha,q+1,q+2) &=& \shift(\alpha,q+1)q\\
+  \end{eqnarray*}
+
+}
+\textbf{Fact:} $(U^{p,\alpha}V^\beta)^{\gamma}$ potential reduces to
+\begin{equation*}
+  (U^p V^{\beta,\hbox{\footnotesize rotate}(p,\alpha)})^{\hbox{\footnotesize shift}(p,\alpha),\gamma}
+\end{equation*}
+assuming $0$ is not in $p,\alpha$.\\
+
+Back to the main thread of our proof, we have
+\begin{eqnarray*}
+  ((\l z^sZ^{\delta,s})^{s+1,\mu,p,\alpha,m+1}Z_1^{\beta,m})^{m,\gamma}\\
+  ((\l z^sZ^s)^{s+1,\mu,p}Z_1^{\beta,m,\hbox{\footnotesize rotate}(p,\alpha,m+1)})^{m,\gamma,\hbox{\footnotesize shift}(p,\alpha,m+1)}
+\end{eqnarray*}
+Consider a new variable $w$ of potential $p-1,$rotate$(s+1,\mu,p)$. Consider the term $[w^{p-1,\hbox{\footnotesize rotate}(s+1,\mu,p)}/z^s]Z^s$. We know that this is in SN by the first part of the lemma, our original special case, or by induction hypothesis on $p$. \qqed

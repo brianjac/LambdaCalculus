@@ -1,0 +1,50 @@
+\chapter{Lecture 28}
+\lhead{March 27, 2015}
+\chead{21-366 Lambda Calculus Lecture 28}
+\rhead{Brian Jacobs}
+\section{Continuity}
+Recall: Suppose $M$ is closed and $XM =_\beta x$, a free variable. Then there exists a term $N$ with finite B\"ohm tree such that $BT(N) \sqsubseteq BT(M)$, and $XN =_\beta x$.\\
+
+Claim: Suppose that $XN =_\beta x$ and the B\"ohm tree of $N$ is finite. Then whenever we have any term $M$ such that $BT(M) \sqsupseteq BT(N)$, then $XM =_\beta x$.\\
+
+Proof: The B\"ohm tree of $N$ is obtained by repeatedly applying the standardization theorem until leaves of the tree are obtained. Once those leaves have been obtained, certain unsolvable terms are replaced by $\bot$. If we skip the final step, we have a reduct of $N$, say $N*$. We have $XN* \twoheadrightarrow_\beta x$. We can then replace those unsolvable leaves with $\Omega = (\l x.xx)(\l x.xx)$. The unsolvable terms are usually in the form $\l x_1\ldots x_n (\l xX)X_1\ldots X_m$. We now have a new term $N^+$ such that $XN^+ \twoheadrightarrow_\beta x$.\\
+
+Clearly, then, if $BT(M) \sqsupseteq BT(N)$, then $XM \twoheadrightarrow_\beta x$.\\
+
+Corollary: If $FM_1 =_\beta K$, and $FM_2 =_\beta K_*$, then $M_1$ and $M_2$ have incompatible B\"ohm trees. That is to say, there is no term $L$ such that $BT(M_1) \sqsubseteq BT(L) \sqsupseteq BT(M_2)$.\\
+
+Proof: $FM_1 xy =_\beta x$ and $X = \l u(T uxy)XM_1 =_\beta x$. $FM_2xy =_\beta y$ $XM_2 =_\beta x$. Apply claim since we have $BT(L) \sqsupseteq BT(M_1) \sqsupseteq BT(M_2)$. $BT(M) \sqsupseteq BT(N)$\\
+
+$XN_1* \twoheadrightarrow_\beta x$ \ \ \  $ BT(L) \sqsupseteq BT(N_1*)$\\
+$XN_2* \twoheadrightarrow_\beta y$ \ \ \ $BT(L) \sqsupseteq BT(N_2*)$\\
+Then there exists a finite term $L*$ such that $BT(L*) \sqsupseteq BT(N_1*)$ and $BT(L*) \sqsupseteq BT(N_2*)$. So we have that $XL* \twoheadrightarrow_\beta x$ and $XL* \twoheadrightarrow_\beta y$. This violates Church-Rosser.\\
+
+Remark: Converse is false. For example, and 2 terms which eta convert cannot be ``split'' by such an $F$ ie if $M =_\beta N$ then you cannot have an $F$ such that $FM =_\beta K$ and $FN =_\beta K_*$. So, for example $\l xx =_\eta \l xy(xy)$. The B\"ohm tree of $\l x.x$ is $\l x.x$ and the B\"ohm tree of $\l (xy).(xy)$ is $\l xy. x --- y$.\\ % Make the line between x and y vertical, with y below x.
+
+Eta is the only counterexample. Two finite B\"ohm trees are separable (splittable) only if one is not an eta conversion of the other.\\
+
+\section{Properties of Unsolvables}
+We say that a possibly open term $X$ is unsolvable if $X$ has no head normal form.\\
+
+Remark: If $X$ is solvable then not necessarily the case that $M_1\ldots M_m XM_1\ldots M_m =_\beta I$. What is true is that there is a substitution $\Theta = [N_1/x_1,\ldots, N_n/x_n]$ where $FV(X) \subseteq \{X_1\ldots X_n\}$.\\
+
+Recall that for all terms are either, $\l x_1 \ldots x_n. x_i X_1\ldots X_m$, $n \geq 0, m \geq 0, i \in \mathbb{N}$ (this is the head normal form) or $\l x_1\ldots x_n (\l xX)X_1\ldots X_m$ with $n \geq 0, m \geq 0$, which is not in head normal form.\\
+
+\begin{enumerate}[(1)]
+  \item Unsolvables are enumerable under reduction.
+  \item If $X$ is unsolvable, then so is $\Theta X$ for any $\Theta$
+\end{enumerate}
+Proof: If the head reduction sequence of $X = X_1 \rightarrow_\beta X_2 \rightarrow_\beta \ldots \rightarrow_\beta X_k \rightarrow_\beta \ldots$ then the head reduction sequence of $\Theta X$ is $\Theta X_1 \rightarrow_\beta \Theta X_2 \rightarrow_\beta \ldots \rightarrow_\beta \Theta X_k \rightarrow_\beta \ldots$
+
+\begin{enumerate}[(1)]
+  \item 3 If and only if $X$ is unsolvable, then so is $\l x.X$.
+  \item 4 If $X$ is unsolvable, and $Y$ is any term, then $XY$ is unsolvable.
+\end{enumerate}
+Proof: Let $X$ be unsolvable, and $Y$ a term. Consider a reductino sequence $XY \rightarrow_\beta X_0 \rightarrow_\beta X_1 \rightarrow_\beta X_2 \rightarrow_\beta \ldots \rightarrow_\beta X_k \rightarrow_\beta \ldots$. There are zero or more head reductions of $X$.\\
+
+Case 1: $X$ does not head reduce to something beginning with a $\l$. Then this sequence is an infinite sequence.\\
+
+Case 2: Consider ther first time a $\l$ comes to the head of $X$. We get $X = X_0$ and $X_0Y \rightarrow_\beta X_1Y \rightarrow_\beta \ldots \rightarrow_\beta X_kY \rightarrow_\beta (\l uU)Y \rightarrow_\beta [Y/u]U \rightarrow_\beta \ldots$. By property $3$, $\l uU$ is unsolvable, so $U$ is unsolvable. By condition $2$, $[Y/u]U$ is unsolvable, therefore $[Y/u]U$ from above is unsolvable and the following reduction is its head reduction sequence.\\
+
+\subsection{Congruence}
+\textbf{Definition:} \textbf{Congruence}: We define an -equivalence- congruence relation such that one subset of the equivalence relation is all unsolvables. We additionally want this equivalence relation to be closed under beta conversion. So $X \subseteq B, Y =_\beta X \Rightarrow Y \in B$. We partition into blocks closed modulo beta conversion: $X,Y \in B, U,V \in B \twoheadrightarrow XU, YV \in B$.\\

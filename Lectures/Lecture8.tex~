@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+
+\input{../Polished/macros.tex}
+
+\lhead{January 30, 2015}
+\chead{21-366 Lambda Calculus Lecture 8}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+% TODO: EXPLICITLY DEFINE PUSH
+
+\begin{document}
+\section{Data Structures}
+\subsection{Lists}
+We can define a list structure as
+\begin{equation*}
+  <X_1,\ldots,X_n> = \l a. aX_1\ldots X_n
+\end{equation*}
+The simplest form of a list is the list of one element. We can write such a list as
+\begin{eqnarray*}
+  <x> = \l a\ aX &=_\beta& \l b\l a (ab)X\\
+  &=_\beta& \l b\l a(I(ab))X\\
+  &=_\beta& (\underbrace{\l cba.(cab)}_{C})IX\\
+  &=_\beta& (CI)X\\
+  &=_\beta& C_*X\\
+\end{eqnarray*}
+We here define $C_*$ as the operator which takes an object to its list.\\
+
+Concatenation of a list $X$ with another list $Y$ is the creation of a new list from two original lists such that the elements of the second list follow the elements of the first:
+\begin{equation*}
+  <X_1,\ldots,X_n>\concat<Y_1,\ldots,Y_m> = <X_1,\ldots,X_n,Y_1,\ldots,Y_n> = B\underbrace{<X_1,\ldots,X_n>}_{\alpha}\underbrace{<Y_1,\ldots,Y_m>}_{\beta}
+\end{equation*}
+We can rewrite this using $B$ as
+\begin{equation*}
+  \l xyz. x(yz) \alpha \beta \twoheadrightarrow_\beta \l z \alpha(\beta z) \rightarrow_\beta \l z \alpha(zX_1\ldots X_n) \rightarrow_\beta \l z\ xX_1\ldots X_nY_1\ldots Y_n
+\end{equation*}
+
+How do we get the first element of the list? If we know that the length of the list is $n$, we can just remove the tail of the list $n$ times until we are left with the first element. If we do not know the length, however, this is not possible. So we could define a new list which somehow encodes its length, perhaps like this: $<n <X_1,\ldots,X_n>>$. This is complicated, however.
+
+\subsection{Stacks}
+Another way to solve the problem of needing list length is to introduce a new data structure: the stack. We define first the empty stack as $E$, and the stack with one element $X_1$ as $\l a . a X_1 E$. If $L$ is a stack of length $n$, then we can create a stack of length $n + 1$ by we simply create a new list $<X_{n+1},L>  = \l a\ aX_{n+1}L$. If we expand this list, we get:
+\begin{equation*}
+  \l a\ aX_{n+1}(\l a\ aX_n(\l a\ aX_{n-1}(\ldots(\l a\ aX_1E)\ldots)))
+\end{equation*}
+We call this operation ``push.'' Analogously we define a ``pop'' operation and a ``tail'' operation as
+\begin{eqnarray*}
+  <X_{n+1},L>K &=_\beta& X_{n+1}\\
+  <X_{n+1},L>K_* &=_\beta& L\\
+\end{eqnarray*}
+But what happens if we attempt to pop from an empty list? We need to test for an empty list. Our test should take a list and if it is nonempty, return a $K$. We can do this with a test:
+\begin{equation*}
+  TEST: \l u\ u(\l zwv.K)(\l ab.K_*)
+\end{equation*}
+To make this happen, we can define $E = \l ab.K_*$.\\
+
+To confirm that this works, we will test on the list $<X,L>$.
+\begin{eqnarray*}
+  TEST<X,L> &\rightarrow_\beta& <X,L>(\l zwv.K)(\l ab.K_*) \rightarrow_\beta (\l zwv.K)XL(\l ab.K_*) \twoheadrightarrow_\beta K\\
+  TEST\ E &\twoheadrightarrow_\beta& E(\l xwv.K)(\l ab.K_*) \twoheadrightarrow_\beta K_*\\
+\end{eqnarray*}
+
+\section{Unbounded Search}
+How do we search for a number? For example, say that we want to find a prime number in the list of natural numbers. In general, we write that we are looking for an $n$ such that $\Phi(n)$ is true. We can see a pattern of cases:
+\begin{eqnarray*}
+  \Phi(0) \rightarrow 0\\
+  ~\Phi(0), \Phi(1) \rightarrow 1\\
+  ~\Phi(0), ~\Phi(1), \Phi(2) \rightarrow 2\\
+  \ldots
+\end{eqnarray*}
+More generally, we can define a function:
+\begin{equation*}
+  f(x) = \left\{
+  \begin{tabular}{c l}
+    $n$ & if $\Phi(n)$\\
+    $f(n + 1)$ & otherwise\\
+  \end{tabular}
+  \right.
+\end{equation*}
+
+\subsection{Fixed Point Theorem (G\"odel)}
+If a term $T$ has a fixed point $F$ such that $(TF) =_\beta F$, then $F$ in some way has to depend on self application, as the statement $\exists F \mid (TF) =_\beta F$ is not true in general for all $T$. This implies that $T(XX) = XX$. We can write:
+\begin{eqnarray*}
+  T(XX) &=& (XX)\\
+  (\l xT(XX))X &=& (XX)\\
+  X &=& \l x\ T(XX)\\
+  (\l x\ T(XX))(\l x\ T(XX)) &=_\beta& T((\l x\ T(XX))(\l x\ T(XX))\\
+  X &=_\beta& TX\\
+\end{eqnarray*}
+We define this as Curry's Paradoxical Combinator. It is a fixed point combinator.
+\begin{equation*}
+  Y_{Curry} := \l y\ (\l x\ (y(xx)))(\l x.y(xx)) 
+\end{equation*}
+We can apply $Y_{Curry}$ to $T$.
+\begin{eqnarray*}
+  Y_{Curry}T \rightarrow_\beta (\l x\ T(xx))(\l x\ T(xx))\\
+  \rightarrow_\beta T((\l x\ T(xx))(\l x\ T(xx))) \leftarrow_\beta T(Y_{Curry}T)
+\end{eqnarray*}
+We can define as well Turing's Fixed Point Combinator:
+\begin{equation*}
+  Y_{Turing} = \underbrace{(\l xy . y(xxy))}_{\alpha}\underbrace{(\l xy . y(xxy))}_{\alpha}
+\end{equation*}
+What happens when we apply $Y_{Turing}$ to $T$?
+\begin{eqnarray*}
+  Y_{Turing}T \rightarrow_\beta (\l y\ y(\alpha\alpha y))T \rightarrow_\beta T(\alpha\alpha T)
+\end{eqnarray*}
+It turns out that $Y_{Turing}$ is much more useful, but $Y_{Curry}$ is easier to determine.
+
+\end{document}

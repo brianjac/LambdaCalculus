@@ -1,0 +1,50 @@
+\def\l{\ensuremath{\lambda}}
+\def\FV{\hbox{FV}}
+\def\SN{\hbox{SN}}
+\def\qed{\ensuremath{\square}}
+\def\qqed{\ensuremath{\blacksquare}}
+\def\rbeta{\ensuremath{\rightarrow_\beta}}
+\def\concat{\ensuremath{\frown}}
+\def\godnum#1{\ensuremath{\kern 0.02in\raisebox{.02in}{$\ulcorner$} \kern-.05in #1 \kern-.03in \raisebox{0.02in}{$\urcorner$}}}
+
+\providecommand{\dotdiv}{% Don't redefine it if available
+  \mathbin{% We want a binary operation
+    \vphantom{+}% The same height as a plus or minus
+    \text{% Change size in sub/superscripts
+      \mathsurround=0pt % To be on the safe side
+      \ooalign{% Superimpose the two symbols
+        \noalign{\kern-.35ex}% but the dot is raised a bit
+        \hidewidth$\smash{\cdot}$\hidewidth\cr % Dot
+        \noalign{\kern.35ex}% Backup for vertical alignment
+        $-$\cr % Minus
+      }%
+    }%
+  }%
+}
+
+\def\monus{\dotdiv}
+\def\v{\ensuremath{\mathcal{V}}}
+
+% Margin Notes
+\long\def\margnot#1#2{\marginpar{
+    \begin{tikzpicture}
+      \fill[color=txtbkblue] (0,-0.05) rectangle (5,0.55);
+      \draw (0.2,0) node[anchor=south west] {\color{txtbkwhite}\textbf{#1}};
+    \end{tikzpicture}#2
+  }
+}
+\def\margnotTwo#1#2#3{\marginpar{
+    \begin{tikzpicture}
+      \fill[color=txtbkblue] (0,-0.45) rectangle (5,0.55);
+      \draw (0.2,0) node[anchor=south west] {\color{txtbkwhite}\textbf{#1}};
+      \draw (0.6,-.45) node[anchor=south west] {\color{txtbkwhite}\textbf{#2}};
+    \end{tikzpicture}#3
+  }
+}
+
+% Example Boxes
+\long\def\examplebox#1#2{
+  \begin{tcolorbox}[enhanced, width=\textwidth,colback={txtbkpaleblue},title={\color{txtbkwhite}\textbf{#1}},colupper=black,colbacktitle=txtbkblue,frame style={draw=none,fill=none}, arc=0pt,outer arc=0pt]
+    #2
+  \end{tcolorbox}
+}

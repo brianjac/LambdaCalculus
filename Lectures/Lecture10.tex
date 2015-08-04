@@ -1,0 +1,94 @@
+\chapter{Lecture 10}
+\lhead{February 4, 2015}
+\chead{21-366 Lambda Calculus Lecture 10}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{A Review}
+\subsection{Combinators}
+\begin{eqnarray*}
+  B &:=& \l xyz . x(yz)\\
+  C &:=& \l xyz . xzy\\
+  K &:=& \l xy . x\\
+  I &:=& \l x .x\\
+  W &:=& \l xy . xyy\\
+  S &:=& \l xyz . xz(yz)
+\end{eqnarray*}
+\subsection{Bracket Abstraction}
+\index{Bracket Abstraction|textbf}
+\begin{equation*}
+  [x] \left\{
+  \begin{tabular}{c}
+    S\\K\\I\\y
+  \end{tabular}
+  \right. = \left\{
+  \begin{tabular}{l}
+   $KS$\\$KK$\\$KI = K_*$\\$Ky$
+  \end{tabular}
+  \right.
+\end{equation*}
+\begin{equation*}
+  [x](XY) = S([x]X)([x]Y), [x]x = I
+\end{equation*}
+$[x]X$ is defined for $X$ an applicative combinations of $S, K, I$ and variables.\\
+
+\section{Beta Conversion of Terms}
+\textbf{Lemma:} $([x]X)x \twoheadrightarrow_\beta x$.\\
+
+\textbf{Proof:} by induction on the definition of bracket abstraction. The base case is $X$ is one of $S,K,I,x$. So, $[x]x := Ix = x$, and we additionally have
+\begin{eqnarray*}
+  KSx &\rightarrow_\beta& S\\
+  KKx &\rightarrow_\beta& K\\
+  KIx &\rightarrow_\beta& I\\
+\end{eqnarray*}
+Remark: We could replace $I$ by $SKK$.
+\begin{equation*}
+  SKKx \rightarrow_\beta (Kx)(Kx) \rightarrow_\beta x
+\end{equation*}
+Inductive step: $[x](UV)x$ is by definition $S([x]U)([x]V)x \rightarrow_\beta ([x]Ux)([x]Vx)$. By the induction hypothesis, $[x]Ux \twoheadrightarrow_\beta U$ and $[x]Vx \twoheadrightarrow_\beta V$. \qqed\\
+
+We define for each term $X$ an applicative combination of $S, K,$ and the free variables of $X$ as $X^{CL}$, where the $CL$ stands for Combinatory Logic. It might be better to call it combinatory algebra, but it retains the $CL$ name for historical reasons. Dude who named them (Curry?) thought it could be a foundation for all of mathematics.\\
+
+How do we formally define $X^{CL}$?
+\begin{eqnarray*}
+  x^{CL} = x\\
+  (XY)^{CL} = (X^{CL}Y^{CL})\\
+  (\l xX)^{CL} = [x]X^{CL}
+\end{eqnarray*}
+
+\textbf{Claim:} $X^{CL} \twoheadrightarrow_\beta X$.\\
+
+\textbf{Proof:} Induction on the definition of $X^{CL}$. Base case: clear. %todo: fix this
+Induction step: Case 1: $X = (UV)$. Then $X^{CL} = (U^{CL}V^{CL})$, and by the induction hypothesis, $U^{CL} \twoheadrightarrow_\beta U$ and $V^{CL} \twoheadrightarrow_\beta V$. Case 2: $X = \l uU$. Then $X^{CL} = [u]U$. By induction on $U$, basis case: $U = V \neq u$. Then $[u]U = Kv \rightarrow_\beta \l u.v = \l u.U$. If $U = u$, then $[u]U = I = \l u.u = \l u.U$. Induction step: $U = Z_1Z_2$. $[u]U = [u](Z_1Z_2) = S([u]Z_1)([u]Z_2)$. We have now
+\begin{equation*}
+  S : \l xyu.(xu)(yu)
+\end{equation*}
+So $\l u ([u]Z_1u)([u]Z_2u)$ which reduces by our lemma to $\twoheadrightarrow_\beta \l u(Z_1Z_2) = \l u(U)$.\\
+
+Finally, $U = \l vV$. We will leave this case as an exercise. \qqed
+
+\section{Useful Combinators}
+\def\arraystretch{1.5}
+\begin{tabular}{c c c}
+  \multirow{2}{*}{Booleans} & $K := \l xg.x$ & TRUE\\
+  & $K_* := \l xy.y$ & FALSE\\
+  \cline{2-2}
+  & ONE $:= \l abc.a$ & \\
+  & TWO $:= \l abc.b$ & \\
+  & THREE $:= \l abc.c$ & \\
+  \cline{2-2}
+  &&\\
+  Equality function & $Eq\ \uline{n}\ \uline{m} = \left\{\begin{tabular}{c l}$K$ & if $n = m$\\$K_*$ & if $n \neq m$\end{tabular}\right.$ &\\
+  &&\\
+\end{tabular}\\
+
+Notice that we should be able to derive $Eq$ if we have a function $E$ such that
+\begin{equation*}
+  E\ \uline{n}\ \uline{m} = \left\{
+  \begin{tabular}{c l}
+    $\uline{1}$ & if $n = m$\\
+    $\uline{0}$ & if $n \neq m$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+We can define a function $E(x,y) := \overline{sg}((x \monus y) + (y \monus x))$, where $sg(0) = 0$ and $sg(n+1) = 1 \forall n \in N$ and $\overline{sg}$ is defined as $\overline{sg} = 1 $ iff $sg = 0$ and $\overline{sg} = 0$ otherwise.

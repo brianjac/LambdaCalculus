@@ -1,0 +1,70 @@
+\chapter{Eta Expansion Proof}
+     Here we outline the steps in the proof that every alternating sequence of beta reductions, eta expansions and potential rotations terminates. First we list the rules:\\
+
+\begin{center}
+  \begin{tabular}{l >{$}r<{$} >{$}c<{$} >{$}l<{$}}
+    (beta) & ((\l y^{n,}Y^{A,n})^{n+1}  Z^{B,n})^{n,C} &\rightarrow& [Z^{A,n}/y]Y^{B,n,C}\\
+    (eta) & Y^{A,n+1,n+2,B} &\rightarrow& (\l y^{n+1,} Y^{A,n+1} y^{n+1,n})^{n+2,B}\\
+    (eta) & Y^{A,n+2,n+1,B} &\rightarrow& (\l y^{n,n+1} Y^{A,n+2} y^{n,n+1})^{n+1,B}\\
+    (clockwise rotation) & (Y^{B,n+1,n+2} Z^{C,n+1})^{n+1,A} &\rightarrow& (Y^{B,n+1} Z^{C,n+1,n})^{n,n+1,A}\\
+    (clockwise) & (Y^{B,n+2,n+1} Z^{C,n})^{n,A} &\rightarrow& (Y^{B,n+2} Z^{C,n,n+1})^{n+1,n,A}\\
+    (counter-clockwise rotation) &  (\l y^{n+1,} Y^{B,n+1})^{n+2,n+1,C} &\rightarrow& (\l y^{n,n+1,} Y^{B,n+1,n})^{n+1,C}\\
+    (counter-clockwise) & (\l y^{n,} Y^{B,n})^{n+1,n+2,C} &\rightarrow& (\l y^{n+1,n,} Y^{B,n,n+1})^{n+2,C}\\
+  \end{tabular}
+\end{center}
+The first two steps involve the very important notion of localization.\\
+
+(1) Localization w.r.t. eta:\\
+Any eta expansion $U \rightarrow \l u.Uu$ followed by a sequence of rotations can be done in the opposite order; a sequence of rotations followed by the eta expansion followed by local clockwise rotations.
+\begin{eqnarray*}
+ (\l u^{A,n+1}) (U^{B,n+1,n+2} u^{A,n+1})^{n+1,C})^{D} &\rightarrow& (\l u^{A,n+1}) (U^{B,n+1} u^{A,n+1,n})^{n,n+1,C})^{D}\\
+(\l u^{A,n}) (U^{B,n+2,n+1} u^{A,n})^{n,C})^{D} &\rightarrow& (\l u^{A,n}) (U^{B,n+2} u^{A,n,n+1})^{n+1,n,C})^{D}
+\end{eqnarray*}
+
+(2) Localization w.r.t. beta:\\
+Any sequence of rotations followed by a beta reduction $(\l uU)V \rightarrow [V/u]U$ can be done in the opposite order; a sequence of local clockwise rotations followed by the beta reduction followed by a sequence of rotations.
+
+\begin{eqnarray*}
+ ((\l u^{n,} U^{A,n})^{n+1,B,m+1,m+2} V^{C,m+1})^{m+1,D} &\rightarrow& ((\l u^{n,} U^{A,n})^{n+1,B,m+1} V^{C,m+1,m})^{m,m+1,D}\\
+ ((\l u^{n,} U^{A,n})^{n+1,B,m+2,m+1} V^{C,m})^{m,m+1,D} &\rightarrow& ((\l u^{n,} U^{A,n})^{n+1,B,m+1} V^{C,m+1,m})^{m,m+1,D}
+\end{eqnarray*}
+
+The next step involves the permutation of beta and eta. It is like the similar step in our textbook except we are using eta expansion, not reduction.\\
+
+(3) Eta postponement:\\
+An eta expansion followed by a clockwise rotation local to a beta redex which is then contracted can be done in the opposite order; a local clockwise rotation followed by a beta reduction followed by a sequence of eta expansions. There may be no beta reduction and in this case there is a rotation.\\
+
+We already know the following:\\
+
+(4) Every alternating sequence of beta reductions and clockwise rotations eventually terminates.\\
+
+Next,\\
+
+(5) Every alternating sequence of eta expansions and local clockwise rotations eventually terminates.\\
+
+Consider an eta expansion followed by a local clockwise rotation. For each subterm, sum the integers in its potential and take the multiset of results; one for each subterm. What happens to the multiset after the expansion followed by the rotation?\\
+
+We already know the following for clockwise rotations alone.\\
+
+(6) Every sequence of rotations eventually terminates.\\
+
+We can define the multiset ordering for pairs of nonnegative integers, ordered lexicographically, just like the multiset order for integers, and show that there are no infinite descending sequences. Now we apply this to prove (6). The subterm $U^{A}$ is given a multiset defined as follows. Let $n$ be the sum of the integers in $A$, let $m$ be the number of moves to the left in the path from the root of the tree to $U^{A}$, and let $k$ be the number of lambdas in the term that are NOT on this path to $U^{A}$. The multiset assigned to $U^{A}$ consists of $n$ copies of $(k,m)$. The multiset assigned to the whole term is the multiset union of the multisets assigned to its subterms. Any rotation reduces this multiset in the multiset order.\\
+
+If we combine (2) and (4) we get the following.\\
+
+(7) Every alternating sequence of beta reductions and rotations terminates.\\
+
+If we combine (1) and (5) we get the following.\\
+
+(8) Every alternating sequence of eta expansions and rotations eventually terminates.\\
+
+Suppose that we have an infinite alternating sequence of beta reductions, eta expansions and rotations. We We may assume that there are infinitely many beta reductions and infinitely many eta expansions (why?). We shall alter this sequence as follows. First we move successive beta reductions to the beginning of  the sequence. If two beta's are separated by an alternating sequence of rotations and eta expansions then all rotations not clockwise and local to the eta expansions can be permuted to be before all these etas. Then by eta postponemnet the last beta can be permuted to a position before the local rotations and these eta expansions, unless it dissappears as in two cases of eta postponement. Thus there must come a time when in every case the next beta eventually disappears in the permutation process.\\
+
+(9) There is no infinite alternating sequence of beta reductions, eta expansions and rotations where in every case the next beta eventually disappears in the permutation process.\\
+
+By (8), for any term, the entire tree of eta expansions and rotations is finite. Suppose that (9) is false and consider a term X, with smallest tree, that begins a counterexample to (9). In such a counterexample the next term after X in the sequence is not the result of a rotation for this would contradict the choice of X. Thus the next term in the sequence must be the result of an eta expansion and this is followed by a sequence of clockwise rotations local to the eta expansion. Now there must be at least one beta reduction which vanishes from permutation with the first eta expansion; for,again, otherwise the choice of X is contradicted. But the first such permutation effects a non trivial rotation, either clockwise or counterclockwise on X which contradicts the choice of X as one with smallest tree.\\
+
+
+Thus by (9) we get the end result.\\
+
+(10) Every alternating sequence of beta reductions, eta expansions and rotations eventually terminates.

@@ -1,0 +1,64 @@
+\lhead{February 16, 2015}
+\chead{21-366 Lambda Calculus Lecture 15}
+
+\section{Review}
+The finiteness of developments results in a unique ``normal form.''
+\textbf{Strip Lemma (the Lemma of Parallel Moves):} A single reduction $\Delta$ and a $\beta$ reduction followed by a complete reduction of all the residuals of $\Delta$ can be reached by $\beta$ reducing the term after applying $\Delta$.
+% Picture line 1: <<---- {\Delta \atop --->}
+% Picture line 2: {complete reudction of all residuals of \Delta \atop ---->>} \dashed <<----
+
+\section{Cofinal Reduction Strategies}
+Asign to each term a reduction sequence
+\begin{equation*}
+  x = x_1 \rightarrow_\beta x_2 \rightarrow_\beta x_3 \rightarrow_\beta \ldots
+\end{equation*}
+So any $Y$ such that $X =_\beta Y$ is $\beta$ reduceable to some term in the sequence.\\
+
+\subsection{Klop's Theorem}
+\textbf{Theorem (Jan Willem Klop):} A reduction sequence $x = x_0 \rightarrow_\beta x_1 \rightarrow_\beta \ldots$ is cofinal if for any $\Delta$ redex in any $x_i$, eventually there is a $j > i$ such that $\Delta$ has no residual in $x_j$.\\
+
+\textbf{Correlary:} The following sequence is cofinal:
+\begin{equation*}
+  x_1 \twoheadrightarrow_{\beta\hbox{ complete reduction of all redexes in $x_1$}} x_2 \twoheadrightarrow_{\beta\hbox{ complete reduction of all redexes in $x_2$}} \ldots
+\end{equation*}
+
+\textbf{Proof:} Suppose that the reduction sequence
+\begin{equation*}
+  x = x_0 \rightarrow_\beta x_1 \rightarrow_\beta \ldots
+\end{equation*}
+has the quality that for a redex $\Delta$ in $x_i$ there exists some $x_j$, $j > i$ such that $\Delta$ has no residual in $X_j$. Therefore, there exists some $k > i$ such that there are no redexes in $x_i$ have residuals in $x_k$. Now we prove that this reduction sequence is cofinite. Given $Y =_\beta x =_\beta x_0$, then by Church-Rosser, there exists a $Z$ such that $X \twoheadrightarrow_\beta Z \twoheadleftarrow_\beta Y$. We will show that there exists an $i$ such that $Z \twoheadrightarrow_\beta X_i$. We have that
+\begin{equation*}
+  Z {\mathscr{R} \atop {\twoheadleftarrow_\beta}} x_0 \rightarrow x_1 \rightarrow \ldots \rightarrow x_i \rightarrow \ldots
+\end{equation*}
+
+We induct on the length of the reduction sequence $\mathscr{R}$ from $X$ to $Z$. Basis: take the one redex $\Delta$ in $\mathscr{R}$. Let $i = 0$. Then there exists $j > 0$ such that $X_j$ has no residuals of $\Delta$ by the strip lemma.\\
+
+We now consider for our induction step that $\mathscr{R}$ has a length greater than $1$.
+\begin{equation*}
+  \ldots \leftarrow_\beta x_i \leftarrow_\beta \ldots \leftarrow_\beta x_1 \leftarrow_\beta x_0 \twoheadrightarrow_\beta U \rightarrow_\beta(\Delta)\ Z
+\end{equation*}
+Take the last reduction, $\Delta$ in $\mathscr{R}$. By the induction hypothesis, there exists an $n$ such that $U \twoheadrightarrow X_n$. Let $C$ be the set of residuals of $\Delta$ in $X_n$. There exists a $k > n$ such that no ersidual of $C$ has $X_k$ a residual in $X_n$.\\
+
+\section{A Method to Prove that $X \not=_\beta Y$}
+We will generalize colored reductions. The idea, due to J.~J.~Levy, is called Levy labels.\\
+
+The general idea of Levy labels is that if we have a term $X$, we assign nonnegative integers to the subterms of $X$, representing the ``potential to reduce.'' Colored reduction simply assigned all ``red'' redexes $0$, and ``green'' redexes $1$, saying they had the potential for one reduction.\\
+
+For our purposes, we will instead use finite sequences of integers. These sequences are nonempty, and the integers themselves are nonnegative. These sequences additionally obey the following property: $n_{i + i} = n_i \pm 1$.
+
+\begin{equation*}
+  n_1,n_2,n_3,\ldots n_k
+\end{equation*}
+\begin{itemize}
+  \item $n_i \geq 0$
+  \item $n_{i + i} = n_i \pm 1$
+  \item $k > 0$
+\end{itemize}
+If $Y$ is a subterm of $X$, we will write $Y = Y^\alpha$, where $\alpha = n_1\ldots n_k$. We require that all occurances of a given variable $X$ should always have the same first element in the sequence $x = x^{n\alpha}$. The $\alpha$s may vary. Applications look like:
+\begin{equation*}
+  (U^{\alpha,{n+1}},V^{\beta,n})^{n,\gamma}
+\end{equation*}
+Abstractions look like:
+\begin{equation*}
+  (\l x^{n} X^{\alpha,n})^{n + 1,\gamma}
+\end{equation*}

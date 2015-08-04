@@ -1,0 +1,54 @@
+\chapter{Lecture 29}
+\lhead{March 30, 2015}
+\chead{21-366 Lambda Calculus Lecture 29}
+\rhead{Brian Jacobs}
+
+\section{Congruence}
+\textbf{Definition:} A binary relation $\sim$ on closed terms is said to be a \textbf{congruence} if
+\begin{enumerate}[(1)]
+  \item $\sim$ is an equivalence relation
+  \item closed under $\beta$ (and $\eta$). i.e. if $M =_\beta N \Rightarrow M \sim N$.
+  \item $M \sim N$ and $P \sim Q \Rightarrow MP \sim NQ$
+\end{enumerate}
+Examples:
+\begin{enumerate}[(i)]
+  \item for all $M,N$ $M \sim N$
+  \item $\{N : M \sim N\} = \{N : M =_\beta N\}$
+  \item $\{N : M \sim N\} = \{N : M =_{\beta\eta} N\}$
+\end{enumerate}
+We know that example iii is not example i because of the Church-Rosser theorem: distinct normal forms don't $\beta\eta$ convert. iii and ii are different because $\beta$ conversion is not as exansive as $\beta\eta$ conversion.\\
+
+Example: $\l xy.xy =_\eta \l x.x$ are in the same class for iii but have unique beta forms, so they are not in the same class for ii. The separation of i and ii is trivial. Take any two terms which do not $\beta$ convert.\\
+
+Suppose that $S$ is a set of closed terms which are closed under $\beta$ conversion. Then there is a congruence relation $\sim$ such that if $M,N \in S$ then $M \sim N$. Indeed there is a smallest such $\sim$. i.e. for any other congruence $\backsim$, we have $M \sim N \Rightarrow M \backsim N$.Why? Because the intersection of congruences is a congruence.\\
+
+\section{Jacopini's Theorem}
+When are $M$ and $N$ related by the smallest congruence containing $S$ as a class?
+
+\subsection{Jacopini Tableaus}
+A \textbf{tableau} relating $M$ and $N$ consists of a sequence of terms $M_1,M_2,\ldots M_m$ and pairs of terms $(P_1,Q_1),(P_2,Q_2),\ldots,(P_m,Q_m)$ and the $\beta$ conversions
+\begin{eqnarray*}
+  M &=_\beta& M_1P_1Q_1\\
+  M_1P_1Q_1 &=_\beta& M_2P_2Q_2\\
+  M_2P_2Q_2 &=_\beta& M_3P_3Q_3\\
+  &\vdots&\\
+  M_{m-1}P_{m-1}Q_{m-1} &=_\beta& M_mP_mQ_m\\
+  M_mP_mQ_m &=_\beta& N
+\end{eqnarray*}
+where $P_i, Q_i \in S$ such that $i = 1,\ldots,m$ and $m \geq 1$. An example is $S = \{Q : Q =_\beta P\}$.\\
+
+Let $J$ be defined by $J(M,N)$ if and only if there is a Jacopini tableau linking $M$ and $N$. We now claim that $J$ is a congruence, and indeed is the smallest congruence.\\
+
+Theorem:
+\begin{enumerate}[(1)]
+  \item J is a congruence
+  \item If $\sim$ is a congruence containing $S$ as a class $J(M,N)$, then $M \sim N$
+\end{enumerate}
+
+Corellary: Let $\sim$ be the smallest congruence containing $S = $ the set of unsolvable terms as a class. Then if $M \sim N$ then $BT(M) = BT(N)$.\\
+
+Example: $\Omega$ and $\Omega\Omega$ are both in $S$, but are $\beta$ different. So $\Omega \sim \Omega\Omega$. They have the same B\"ohm tree. In fact, $\l x .x\Omega \sim \l x. x(\Omega\Omega)$, and they have the same B\"ohm tree.\\
+
+Proof: $M \sim N \Leftrightarrow$ there is a Jacopini tableau. Compute the B\"ohm tree $TB(M_i,P_i,Q_i)$. Compute a head normal form, if it exists.\\
+
+Remark: Jacopini's Theorem: We can set $S$ to be the $\beta$ closure of $\{\Omega,M\}$, then the smallest $\sim$ containing $S$ as a class is not our first example from above.\\

@@ -1,0 +1,111 @@
+\documentclass{report}
+\usepackage[margin=1in,marginparwidth=1.5in, marginparsep=.25in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz-qtree}
+\usepackage{titlesec}
+\usepackage{enumerate}
+\usepackage{imakeidx}
+\usepackage{multirow}
+\usepackage[nonumberlist]{glossaries}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+\usepackage{listings}
+\usepackage{marvosym}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fontspec}
+\usepackage{tcolorbox}
+\usepackage{colortbl}
+\usepackage{array}
+
+\tcbuselibrary{skins}
+
+\usetikzlibrary{arrows}
+
+\input{macros.tex}
+\input{style.tex}
+
+\def\plainFormat#1{} % Make it {#1} to enable.
+
+%%%%%%%%%%%%%%%
+% Set up page %
+%%%%%%%%%%%%%%%
+\lhead{\today}
+\chead{21-366 Lambda Calculus Lecture Notes}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\makeindex[options=-s Lambda-index.ist]
+\makeglossaries
+\setglossarystyle{altlist}
+\input{Appendicies/Glossary.tex}
+\glsaddall
+
+\title{21-366 Lambda Calculus \\\vspace{.2in} \normalsize Lecture Notes and Exercises}
+\author{Brian Jacobs}
+\date{\today}
+
+\begin{document}
+% Include Title Page
+\input{TitlePage/title.tex}
+
+\plainFormat{\maketitle}
+
+\tableofcontents
+\input{Appendicies/Introduction.tex}
+\newgeometry{top=1in, bottom=1in, inner=1in, outer=2in}
+\input{Lectures/Lecture1.tex}
+\input{Lectures/Lecture2.tex}
+\input{Lectures/Lecture3.tex}
+\input{Lectures/Lecture4.tex}
+\input{Lectures/Lecture5.tex}
+\input{Lectures/Lecture6.tex}
+\input{Lectures/Lecture7.tex}
+\input{Lectures/Lecture8.tex}
+\input{Lectures/Lecture9.tex}
+\input{Lectures/Lecture10.tex}
+\input{Lectures/Lecture11.tex}
+\input{Lectures/Lecture12.tex}
+\input{Lectures/Lecture13.tex}
+\input{Lectures/Lecture14.tex}
+\input{Lectures/Lecture15.tex}
+\input{Lectures/Lecture16.tex}
+\input{Lectures/Lecture17.tex}
+\input{Lectures/Lecture18.tex}
+\input{Lectures/Lecture19.tex}
+\input{Lectures/Lecture20.tex}
+\input{Lectures/Lecture21.tex}
+\input{Lectures/Lecture22.tex}
+\input{Lectures/Lecture23.tex}
+\input{Lectures/Lecture24.tex}
+\input{Lectures/Lecture25.tex}
+\input{Lectures/Lecture26.tex}
+\input{Lectures/Lecture27.tex}
+\input{Lectures/Lecture28.tex}
+\input{Lectures/Lecture29.tex}
+\input{Lectures/Lecture30.tex}
+\input{Lectures/Lecture31.tex}
+\input{Lectures/Lecture32.tex}
+\input{Lectures/Lecture33.tex}
+\input{Lectures/Lecture34.tex}
+\input{Lectures/Lecture35.tex}
+\input{Lectures/Lecture36.tex}
+\input{Lectures/Lecture38.tex}
+\restoregeometry
+\input{Exercises/Exercise1.tex}
+\input{Exercises/Exercise2.tex}
+\input{Exercises/Exercise3.tex}
+\input{Exercises/Exercise4.tex}
+\input{Exercises/Exercise5.tex}
+\input{Exercises/Exercise6.tex}
+\appendix
+\input{Appendicies/Mumbles.tex}
+\input{Appendicies/EtaExpansion.tex}
+\input{Appendicies/NamedLambdaTable.tex}
+\addcontentsline{toc}{chapter}{Glossary}
+\printglossary
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+\end{document}

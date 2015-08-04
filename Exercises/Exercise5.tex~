@@ -1,0 +1,28 @@
+\lhead{\today}
+\chead{21-366 Lambda Calculus Exercise 5}
+\chapter{Exercise 2}
+
+\section{Problem Statement}
+Recall that we can reduce potentials in two ways
+
+(i) (U^{a,n+1,n+2} V^{b,n+1})^{n+1,c} reduces to
+    (U^{a,n+1} V^{b,n+1,n})^{n,n+1,c}
+
+(ii)(U^{a,n+2,n+1} V^{b,n})^{n,c} reduces to
+    (U^{a,n+2} V^{b,n,n+1})^{n+1,n,c}
+
+Show that every sequence of such reductions must terminate.
+[Hint; given a term X with potential, ignore lambdas to think of X
+as a binary tree with sequences of non-negative integers at its nodes.
+Let b be a positive integer bigger than the sum of all the previously
+mentioned integers + 3. For a given subterm Y of X we have the potential
+n_{1},...,n_{k} and the number of moves m to the left in the path
+from the root of X to Y. So for example in (\x.xx)(\x.xx), where
+we have omitted potentials, the m for the 1st occurrence of x is
+2, for the second occurrence of x is 1, for the third is 1, and for
+the 4th is 0. Now to this subterm of X assign the value
+(n_{1}+...+n_{k}) * b^{m}
+and let #X be the sum of the values of the subterms of X. Show that
+potential reductions reduce #X]
+
+\section{Proof}

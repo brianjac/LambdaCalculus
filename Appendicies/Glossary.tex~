@@ -1,0 +1,77 @@
+\newglossaryentry{term}
+{
+        name=Term,
+        description={A term in \l calculus consists of constants and variables $x, y, z$ and other terms, $X, Y, Z$, arranged in one of the following ways. First, as a variable $x$. Second as $(XY)$, read ``$X$ applied to $Y$.'' Third, as a lambda term $(\l xX)$}
+}
+
+\newglossaryentry{program}
+{
+        name=Program,
+        description={Any term in lambda calculus is referred to as a ``program.''}
+}
+
+\newglossaryentry{application}
+{
+        name=Application,
+        description={An application of a term $X$ to another term $Y$ is written $XY$}
+}
+
+\newglossaryentry{redex}
+{
+        name=Redex,
+        description={In a reduction, the redex is the initial term. It is replaced by the \textbf{reductum}}
+}
+
+\newglossaryentry{reductum}
+{
+        name=Reductum,
+        description={In a reduction, the reductum is derived from the \textbf{redex}}
+}
+
+\newglossaryentry{combinator}
+{
+        name=Combinator,
+        description={A term $X$ such that $FV(X) = \emptyset$. Alternately: a term which does not have any free variables. See \textbf{closed}}
+}
+
+\newglossaryentry{closed}
+{
+        name=Closed,
+        description={A term $X$ such that $FV(X) = \emptyset$. Alternately: a term which does not have any free variables. See \textbf{combinator}}
+}
+
+\newglossaryentry{monussubtraction}
+{
+        name={Monus Subtraction},
+        description={Notated $\dotdiv$, monus subtraction is defined as usual subtraction with the additional rule that if the subtraction results in a number lower than zero, it is defined to be $0$ instead}
+}
+
+\newglossaryentry{boolean}
+{
+        name={Boolean},
+        description={A boolean can take one of two values, either true or false. We conventionally refer to true as $K := (\l xy.x)$ and false as $K_* := KI$}
+}
+
+\newglossaryentry{leftassociation}
+{
+        name={Left Association},
+        description={When we delete every pair of parens around a subterm which is not in argument position, we can restore them by using left association (TODO: IMPROVE THIS)}
+}
+
+\newglossaryentry{ring}
+{
+        name={Ring},
+        description={An algebraic structure comprised of a set and operations which generalize multiplication and addition to the elements of the set}
+}
+
+\newglossaryentry{diagonalize}
+{
+        name={Diagonalize},
+        description={A function diagonalizes across its inputs by setting all of its inputs to be equal}
+}
+
+\newglossaryentry{fixedpoint}
+{
+        name={Fixed Point},
+        description={A fixed point of a function is an element of the function's domain which is mapped to itself by that function. For example, if $f(x) = x$, then $x$ is a fixed point of $f$}
+{

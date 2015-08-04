@@ -1,0 +1,171 @@
+\chapter{Lecture 9}
+\lhead{February 2, 2015}
+\chead{21-366 Lambda Calculus Lecture 9}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Lists of Integers}
+\index{List!of Integers}\index{Integer}
+Our goal now is to find the length of a list of integers.\\
+Recall that:
+\begin{eqnarray*}
+  Y_{Curry} = \l y((\l x\ y(xx))(\l x\ y(xx)))\\
+  Y_{Turing} = (\l xy . y(xxy))(\l xy . y(xxy))\\
+\end{eqnarray*}
+\begin{eqnarray*}
+  \langle x_1,\ldots,x_n \rangle &=& \l a . aX_1\ldots X_n\\
+  \hbox{length}(\langle x_1,\ldots,x_n \rangle ) &=& n\\
+\end{eqnarray*}
+If we take our representation of nonnegative integers, and define a new encoding such that $n = n' + 1$, we can get a representation of nonnegative integers using only positive integers. This leaves us with zero as a special value, which we can use to mark the end of a list. We can then encode a list of nonnegative integers $m_1,m_2,\ldots,m_n$ as $m_1+1,m_2+1,\ldots,m_n+1,0$.\\
+
+\begin{equation*}
+  \l a . a\ \uline{m_1+1}\ \ldots\ \uline{m_n+1}\ \uline{0}
+\end{equation*}
+We compute the length function $f$.
+\begin{equation*}
+  Y_{Turing}(\underbrace{\l f \l xy. (\uline{sg}\ y)(f(\uline{s}x))x}_{L})\uline{0}
+\end{equation*}
+So we take $C_*(Y_{Turing}L)$ to cause application to a list to put the list in function position:
+\begin{equation*}
+  C_*(Y_{Turing}L\uline{0})(\l a . a(\uline{m_1+1}\ \ldots \uline{m_n+1}, \uline{0})) \rightarrow_\beta (\l a . a(\uline{m_1+1}\ \ldots \uline{m_n+1}, \uline{0}))(Y_{Turing}L\uline{0})
+\end{equation*}
+\subsection{Computing the Maximum of a List}
+Imagine that you are in a pumpkin patch with your children, who want the largest pumpkin possible with which to make a jack-o-lantern. You start down the first row of pumpkins, and look at the first one. ``This is the largest pumpkin I have seen yet!'' you say. So you take it with you. The next several pumpkins are all smaller than the one you are carrying, so you pass them by.\\
+
+Eventually you come to a 
+
+\subsection{Testing our list length function}
+\begin{eqnarray*}
+  (Y_{Turing}L\uline{0} \uline{m_1+1})\\
+  \ldots % TODO: finish beta reduction to the length
+\end{eqnarray*}
+
+\section{Simultaneous Fixed Points}
+\index{Fixed Point|textbf}
+There are more kinds of fixed points, other than the ones found by Turing and Curry. We defined a simple fixed point\index{Fixed Point!Simple Fixed Point} as
+\begin{equation*}
+  Ff =_\beta f
+\end{equation*}
+We can define simultaneous fixed points\index{Fixed Point!Simultaneous Fixed Point} as
+\begin{eqnarray*}
+  f = Ffg = F(\langle f,g\rangle K)(\langle f,g \rangle K_*)\\
+  g = Gfg = G(\langle f,g\rangle K_*)(\langle f,g\rangle K_*)\\
+\end{eqnarray*}
+We can see that
+\begin{equation*}
+  \langle f,g\rangle = \l x\ \langle F(\langle f,g\rangle ,K)(\langle f,g\rangle K_*),G(\langle f,g\rangle ,K)(\langle f,g\rangle K_*)\rangle \langle f,g\rangle
+\end{equation*}
+So, we can set
+\begin{equation*}
+  f = \underbrace{Y_{Turing} (\l x \langle F(xK)(xK_*),G(xK)(xK_*)\rangle )}_{\alpha}K
+\end{equation*}
+and
+\begin{equation*}
+  g = Y_{Turing} (\l x \langle F(xK)(xK_*),G(xK)(xK_*)\rangle)K_*
+\end{equation*}
+We can apply
+\begin{eqnarray*}
+  \l x \langle F(\langle f,g\rangle,K)(\langle f,g\rangle K_*),G(\langle f,g\rangle,K)(\langle f,g\rangle K_*)> \alpha = \langle F(\alpha K,\alpha K_*), G(\alpha K, \alpha K_*)\rangle &K& = f\\
+&K_*& = g
+\end{eqnarray*}
+
+Let $f = Ffg$ and $g = Gfg$. We will define $\Phi(g) = F(\Phi g)g$. If we take $\alpha = Y_{Turing}(\l xy . F(xy)y)$. What do we know about $\alpha$? $\alpha = \Phi = \l y\ F(\Phi y,y)$.\\
+
+What:
+\begin{equation*}
+  Y_{Turing} (\l y G(F(Y_{Turing}(\l uv.F(uv)v)y)y)y)
+\end{equation*}
+
+\section{The SKI Combinator Calculus}
+\index{SKI Combinator Calculus|textbf}
+\subsection{Closing Terms with Bracket Abstraction}
+It seems like it should not be too difficult to take an open expression and convert it into one which is closed. One process which accomplishes this is called \textbf{bracket abstraction}\index{Bracket Abstraction|textbf}. Let $x,y$ be variables. We recursively define bracket abstraction as:
+\begin{eqnarray*}
+  {[x]}y &:=& Ky\\
+  {[x]}x &:=& I\\
+  {[x]}(E_1,E_2) &:=& S([x]E_1)([x]E_2)
+\end{eqnarray*}
+
+We claim two things about the bracket abstraction: first, that if $U$ is an applicative combination of $S,K,I$ and free variables, then $([x]U)x \twoheadrightarrow_\beta U$, and second, that the bracket abstraction of an open term $U$ is closed.\\
+
+We can prove our first claim inductively. Let our bracket abstraction be $[x]U$. Our base case is where $U$ is a free variable. There are then two possible subcases depending on whether $U = x$ or $U \neq x$. If $U = x$, then our bracket abstraction is $[x]x = I$, and our claim holds: $Ix \rightarrow_\beta x$. If $U = y \neq x$, then we have $[x]y = Ky$, and we have $Kyx \rightarrow_\beta y$.\\
+
+This leaves our inductive step, where $U = QV$. $[x]U$ is therefore $S([x]Q)([x]V)$. By our induction hypothesis, $[x]Qx \rightarrow_\beta Q$ and $[x]Vx \rightarrow_\beta V$. We can perform a $\beta$ reduction to get
+\begin{equation*}
+  S([x]Q)([x]V)x \twoheadrightarrow_\beta [x]Qx([x]Vx) \twoheadrightarrow_\beta QV
+\end{equation*}
+
+Our second claim can also be proven inductively. We again use the bracket abstraction $[x]U$. Our base case is again that $U$ is a free variable. If $U = x$, then we get $[x]x = I$, which is closed. If $U = y$, then we get $[x]y = Ky =_\beta \l x.y$, which is closed. In our inductive step, we assume by our induction hypothesis that $[x]Q$ and $[x]V$ are closed, and we apply
+\begin{equation*}
+  S([x]Q)([x]V) =_\beta \l xyz.([x]Q)([x]V) \rightarrow_\beta \l z.([x]Qz)([x]Vz)
+\end{equation*}
+
+This is a closed term as well. When taken together, we can see that the bracket abstraction is a transformation which allows us to close open terms without altering their meaning.
+
+\subsection{Church and Curry's Combinator Calculii}
+How many combinators do we really need? At this juncture, we have defined a moderately sizeable list of combinators to perform a variety of tasks. As it turns out, we can construct some of these combinators out of more simple ones. In fact, every closed term in the lambda calculus can be represented with nothing more than the combinators $S,K$ and $I$. This claim is was made by Curry, and the resulting system is called the SKI combinatory logic. There is a weaker version of this theorem which was proven by Church that relies on the combinators $B,C,K,W,$ and $I$. We will prove Curry's version.\\
+
+\examplebox{Recall: $S, K$, and $I$}{
+  \begin{eqnarray*}
+    S &:=& \l xyz.xz(yz)\\
+    K &:=& \l xy.x\\
+    I &:=& \l x.x\\
+  \end{eqnarray*}
+}
+
+\subsection{Proof of Completeness for SKI}
+We prove that any lambda term can be written using only $S,K$ and $I$ by introducing a transformation $T[X] = Y$ which takes an arbitrary lambda term $X$ and converts it into an applicative combination of $S,K$ and $I$ with free variables. $T[\ ]$ is defined recursively as follows.
+\begin{eqnarray*}
+  T[x] &:=& x\\
+  T[(XY)] &:=& (T[X] T[Y])\\
+  T[\l x.X] &:=& (K T[X])\hbox{ if $x \not\in \FV(X)$}\\
+  T[\l x.x] &:=& I\\
+  T[\l xy.E] &:=& T[\l x.T[\l y.E]]\hbox{ if $x \in \FV(E)$}\\
+  T[\l x.(XY)] &:=& (S T[\l x.X] T[\l x.Y])\hbox{ if $x \in \FV(X)$ or $x \in \FV(Y)$}
+\end{eqnarray*}
+
+As should now be familiar, our proof will proceed by induction on the structure of a lambda term, $U$. In our base case, $U = x$ and $T[x] = x$. For our inductive step, we have our usual two cases. For our first case, consider $U = (XY)$. Since $T[(XY)] = (T[X]T[Y])$, and we know that $T[X]$ and $T[Y]$ are applicative combinations of $S,K,I$ and free variables, the application $(T[X]T[Y])$ is also in SKI.\\
+
+Finally, we have the case where $U = \l x.V$, which breaks down into several further subcases. If $V = x$, then we simply have the identity combinator, $I$. If $V = X$ and $x$ is not in the free variables of $X$, then $T[\l x.X] = KT[X]$
+
+% http://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis
+
+\subsection{Proof of Equivalence for $T[\ ]$}
+
+\section{Yet Smaller: The $\iota$ Combinatory Logic}
+If our objective is minimalism, we can do better than SKI combinatory logic by observing that there exists a combinator which can be used to construct the SKI combinators. This combinator was discovered by Chris Barker, and is called $\iota$.
+
+\begin{eqnarray*}
+  \iota x &:=& \l x.(xS)K\\
+\end{eqnarray*}
+
+Applying $\iota$ to itself gives us the identity combinator, $I$.\\
+
+\examplebox{Deriving $I$ from $\iota$}{
+  \begin{eqnarray*}
+    \iota\iota &=_\beta& (\l x.(xS)K)\iota \rbeta (\iota S)K\\
+    &=_\beta& ((\l x.(xS)K)S)K \rbeta ((SS)K)K)\\
+    &=_\beta& ((((\l xyz.(xz)yz)S)K)K) \rbeta ((SK)KK)\\
+    &=_\beta& ((\l xyz.(xz)yz)(K))(KK) \rbeta \l z.(Kz)(KK)\\
+    &=_\beta& \l z.(\l xy.x)z(KK) \rbeta \l z.z\\
+    &=_\beta& I
+  \end{eqnarray*}
+}
+
+If we apply $\iota$ twice to $I = \iota\iota$ we get $K$.\\
+
+\examplebox{Deriving $K$ from $\iota$ and $I$}{
+  \begin{eqnarray*}
+    \iota\iota I &=_\beta& \iota((\l x.(xS)K) I) \rbeta \iota((IS)K) \rbeta \iota(SK)\\
+    &=_\beta& (\l x.(xS)K)(SK) \rbeta (SK)SK\\
+    &=_\beta& KK(SK) =_\beta K
+  \end{eqnarray*}
+}
+
+Applying $\iota$ one more time gives us $S$.\\
+
+\examplebox{Deriving $S$ from $\iota$ and $K$}{
+  \begin{eqnarray*}
+    \iota K &=_\beta& (\l x.(xS)K) \rbeta (KS)K \rbeta S
+  \end{eqnarray*}
+}

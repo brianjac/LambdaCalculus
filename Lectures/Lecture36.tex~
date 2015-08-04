@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+
+\input{../Polished/macros.tex}
+
+\def\floor#1{\lceil #1 \rceil}
+
+\lhead{April 15, 2015}
+\chead{21-366 Lambda Calculus Lecture 36}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Funtions Represented by \l{} Terms}
+$\Phi : \mathbb{N} \mapsto \mathbb{N}$ partial functions where the domain of $\Phi \subsetneq \mathbb{N}$. Terms in particular $\{K,K_*\}$\\
+
+Examples:
+\begin{enumerate}[(1)]
+  \item E(n,m) = \begin{tabular}{c}$K$ if $n = m$\\$K_*$ if $n \not= m$\end{tabular}
+  \item O(n,m) = \begin{tabular}{c}$K$ if $n < m$\\$K_*$ if $n \geq m$\end{tabular}
+  \item Closed under $\wedge,\vee,\neg$
+  \item if $F$ represents a $\subset \mathbb{N}$ i.e. $F\uline{n} = K,K_*$, then $\exists_{<m} F = K$ if $\exists n F\uline{n} = K$ and $n < m$, and $\exists F = K_*$ if $\neg \exists n F\uline{n} = K$. Indeed if $\exists n F\uline{n} = K$, we would like to find the smallest such $n$. Kleene writes $\mu n F\uline{n} = k$, where $\mu$ represents min.
+\end{enumerate}
+Kleene called this general recursion. If we have $F,m$ such that $x \geq m$, $fx = K_*$. On the other hand, if $x < m$ and $Fx$, then $fx = K$. Finally, if $x < m$ and $\neg Fx$, then $fx = f \hbox{suc}x$. $\exists F = f\uline{0}$. We can unbound the search by ignoring the $x \geq m$ restriction.\\
+
+\subsection{Examples}
+Key application: there exists a term $L$ such that $L$ enumerates the codes of all terms. For each term $X$ there exists ($\infty$ many) $N$ such that $L n = \godnum{X}$.
+
+\subsection{The Fundamental Theorem of Arithmetic}
+Any natural number $n > 1$ can be written as the sum of powers of primes. A consequence of this theorem is that every natural number $n \geq 1$ can be written as a power of two times an odd integer. $n = 2^\alpha(4\beta \pm 1)$. Given some $n$, we can compute $\alpha,\beta$.\\
+
+\begin{enumerate}[(1)]
+  \item compute the relation $m | n$
+\end{enumerate}
+How? Euclid. $f mn = K$ if $n = m$, and $f (n - m)$ if $n > m$.\\
+
+To compute the quotient and remainder of $n/m$
+\begin{eqnarray*}
+  n = Qm\bot R\\
+  Q = \floor{\dfrac{n}{m}}\\
+  R = n \monus \floor{\dfrac{n}{m}}
+\end{eqnarray*}
+
+\section{Construction of the Term $L$}
+We will construcxt $\overline{L} n = $stack of the 1st $n$ terms.
+
+\end{document}

@@ -1,0 +1,10 @@
+\chapter{Table of Named Lambda Terms}
+\begin{eqnarray*}
+  I &:=& (\l xx)\\
+  S &:=& (\l x(\l y(\l z((xz)(yz))))) = \l xyz.xy(yz)\\
+  \omega &:=& \l x(xx)\\
+  \Omega &:=& (\omega \omega) = (\l x(xx))(\l x(xx))\\
+  \Omega^+ &:=& (\l x(xxx))(\l x(xxx))\\
+  K &:=& (\l xy.x)\\
+  K^* &:=& KI = (\l xy.x)I\\
+\end{eqnarray*}

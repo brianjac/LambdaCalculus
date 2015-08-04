@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+
+\input{../Polished/macros.tex}
+
+\lhead{February 6, 2015}
+\chead{21-366 Lambda Calculus Lecture 11}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Useful Combinators}
+\def\arraystretch{1.5}
+\begin{tabular}{c c c}
+  \multirow{2}{*}{Booleans} & $K := \l xg.x$ & TRUE\\
+  & $K_* := \l xy.y$ & FALSE\\
+  \cline{2-2}
+  & ONE $:= \l abc.a$ & \\
+  & TWO $:= \l abc.b$ & \\
+  & THREE $:= \l abc.c$ & \\
+  \cline{2-2}
+  &&\\
+  Equality function & $Eq\ \uline{n}\ \uline{m} = \left\{\begin{tabular}{c l}$K$ & if $n = m$\\$K_*$ & if $n \neq m$\end{tabular}\right.$ &\\
+  &&\\
+\end{tabular}\\
+
+Notice that we should be able to derive $Eq$ if we have a function $E$ such that
+\begin{equation*}
+  E\ \uline{n}\ \uline{m} = \left\{
+  \begin{tabular}{c l}
+    $\uline{1}$ & if $n = m$\\
+    $\uline{0}$ & if $n \neq m$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+We can define a function $E(x,y) := \overline{sg}((x \monus y) + (y \monus x))$, where $sg(0) = 0$ and $sg(n+1) = 1 \forall n \in N$ and $\overline{sg}$ is defined as $\overline{sg} = 1 $ iff $sg = 0$ and $\overline{sg} = 0$ otherwise.
+
+\section{Stack Discipline}
+The empty stack is defined as $KK_*$, or THREE. If our stack is $\l a\ aLR$, $L$ is the top, $R$ is the result of popping the stack.
+
+\section{Trees}
+What will we do today?
+\begin{enumerate}[(I)]
+  \item Describe the data structure
+  \item Tasks:
+    \begin{itemize}
+      \item insertion of an element
+      \item balancing the tree
+      \item finding an element in the tree
+    \end{itemize}
+  \item write an informal algorithm for finding an element in a tree
+    \begin{itemize}
+      \item write a lambda term which implements our algorithm
+    \end{itemize}
+\end{enumerate}
+
+A tree is a data structure which is comprised of leaves and internal nodes, where a leaf is defined as an ordered triple $<\hbox{TRUE}, \uline{n}, X>$ of a boolean which is true, an index number, and an object. An internal node is an ordered triple of $<\hbox{FALSE}, L, R>$ of a false boolean, a left subtree, and a right subtree.\\
+
+We provide a recursive definition of trees: $<\hbox{TRUE}, \uline{n+1}, X>$ is a tree, and $<\hbox{FALSE}, L, R>$ is a tree.\\
+
+Now we describe our algorithm: $f(x,y,z)$ where $x$ is a tree, $z$ is the item we are searching for, and $y$ is a stack of trees. If $x$ is a leaf, then $x(TWO)$ is the index. We apply $Eq(x(TWO))z$. If this is $\uline{1}$, then we want to return $x$ of 3, so we write:
+\begin{equation*}
+  Y_{Turing}(x(ONE)(Eq(x(TWO))z(x(THREE))(f\ (\hbox{TOP }y)(\hbox{POP }y)z)(f (x(TWO))(\l a\ a(x(THREE))y))))
+\end{equation*}
+We call this function as $Fx(\hbox{Empty stack}z)$.\\
+
+\subsection{Beta Normality}
+\textbf{Definition:} $X$ is said to be \uline{beta normal} if $X$ has no $\beta$ redexes in it. For example, all the integers $\l xy(x(\ldots(xy))\ldots) = \uline{n}$ are normal. We will prove that if a term $x$ is beta equal to any normal term, then that term $x$ is unique.\\
+
+\end{document}

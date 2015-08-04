@@ -1,0 +1,8 @@
+\lhead{\today}
+\chead{21-366 Lambda Calculus Exercise 2}
+\chapter{Exercise 2}
+
+\section{Problem Statement}
+A elementary alpha conversion is an alpha conversion which changes only the variable at one occurrence of lambda, and, of course, at all the occurrences it binds. So, for example, the alpha conversion from $\l xy.(xy)$ to $\l yx. (yx)$ is not elementary but it can achieved by the sequence $\l xy.(xy)$, $\l xz.(xz)$, $\l yz.(yz)$, $\l yx.(yx)$ of elementary alpha conversions. Show that every alpha conversion from $X$ to $Y$ can be achieved by a sequence of elementary alpha conversions which uses at most one variable neither in $X$ nor in $Y$.
+
+\section{Proof}

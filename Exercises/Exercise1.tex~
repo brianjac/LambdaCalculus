@@ -1,0 +1,15 @@
+\lhead{\today}
+\chead{21-366 Lambda Calculus Exercise 1}
+\chapter{Exercise 1}
+
+\section{Problem Statement}
+We define a \textbf{pseudoterm} in the following manner:
+\begin{itemize}
+  \item A variable $x$ is a pseudoterm.
+  \item If $X$ is a pseudoterm and $x$ is a variable, then $(\l xX)$ is a pseudoterm.
+  \item If $X_1, \ldots X_n$ are pseudoterms and $x$ is a variable, then $(x\ X_1 \ldots X_n)$ is a pseudoterm.
+  \item If $X_2, \ldots X_n$ are pseudoterms and $(\l xX)$ is a pseudoterm then $((\l xX) X_1 \ldots X_n)$ is a pseudoterm.
+\end{itemize}
+Show that every pseudoterm results from a term by deleting parens around applications in function position. Note that this is slightly different from the formulation in class (deleting parens around applications not in argument position) because we are not using Church's dot notation. With dot notation, for example $(\l x (x X_1 \ldots X_n))$ becomes $(\l x . x X_1 \ldots X_n)$.
+
+\section{Proof}

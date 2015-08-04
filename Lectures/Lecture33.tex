@@ -1,0 +1,45 @@
+\chapter{Lecture 33}
+\lhead{April 8, 2015}
+\chead{21-366 Lambda Calculus Lecture 33}
+\rhead{Brian Jacobs}
+
+\section{Codes: A Review}
+\begin{eqnarray*}
+  \godnum{x_n} &=& \l a.ak_1^3MN\uline{n}\\
+  \godnum{(XY)} &=& \l a.aK_2^3M\godnum{X}\godnum{Y}\\
+  \godnum{\l x.X} &=& \l a.aK_3^3M\uline{n}\godnum{X}\\
+\end{eqnarray*}
+where
+\begin{eqnarray*}
+  K_i^n = \l x_1\ldots x_n.x_i\\
+  \uline{n} = \l xy.\underbrace{x(\ldots (x}_{n}y)\ldots)
+\end{eqnarray*}
+
+\subsection{Examples}
+\begin{eqnarray*}
+  \godnum{K_i^n} &=& \langle K_3^3, \uline{0}, \uline{1}, \langle K_3^3, \uline{0}, \uline{2}, \langle \ldots \langle K_1^3, \uline{0}, \uline{0}, \uline{i} \rangle \rangle \ldots \rangle \rangle\\
+  \godnum{\uline{n}} &=& \langle K_3^3, \uline{0}, \uline{1}, \langle K_3^3, \uline{0}, \uline{2}, \langle K_2^3, \uline{0}, \langle K_1^3, \uline{0}, \uline{0}, \uline{1} \rangle, \langle \godnum{\underbrace{x_1(\ldots(x_1}_{n-1}x_2))} \rangle \rangle \rangle \rangle
+\end{eqnarray*}
+
+\subsection{More Examples}
+Recall our implementation of the stack. The empty stack, $\bot = \l a.K_*$. Push and pop and top. A stack of $X$'s look like $\l a.aX\square$ where $\square$ is a stack of $X$'s. The concatenation of two stacks, Cons $XY = $ if $x$ is $\bot$ then $y$; else push(top $x$) (cons pop$(x)$y).\\
+
+pop$(\l a.aXY) = Y$ and top$(\l a.aXY) = X$.\\
+
+\begin{equation*}
+  Cons := Y_{Turing}\l xy.Test x((push(top x)(f (pop x)y))y)
+\end{equation*}
+
+\section{Simple Syntactic Functions}
+FV$(\godnum{x})$? We write 
+\begin{equation*}
+  \godnum{x} = \langle K_i^3, M, P, Q \rangle
+\end{equation*}
+If $i = 1$, then we are in a variable case, and the free variables list is $\l a.aQ\bot$. If $i = 2$, then we have an application, and so the free variables list is the concatenation the free variables of $P$ and $Q$, or Cons FV$(P)$ FV$Q$. If $i = 3$, then we need to search the free variables of $Q$ and omit it. Otherwise, the free variables are the free variables of $Q$.\\
+
+The bound variables are defined similarly.\\
+
+$CV(X,x)$, assuming $x$ is a Church numeral. Search $X$ for $\l y$ such that $x$ is free, and list those $\l y$s.
+
+\section{Substitution}
+If we have $\godnum{X}$, $\godnum{Y}$, and $\godnum{x_n}$, then 

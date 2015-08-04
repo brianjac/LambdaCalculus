@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+
+\input{../Polished/macros.tex}
+
+\lhead{February 25, 2015}
+\chead{21-366 Lambda Calculus Lecture 18}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Lexicographic Orderings}
+A lexicographic ordering of ordered tuples of the form $(x_0,\ldots,x_n)$...
+
+\section{Definition of Principle Redex}
+The principle redex is the one to contract if we want to find an infinite reduction sequence. The principle redex of
+\begin{enumerate}[(1)]
+  \item $(\l x^{n,}X^{\alpha,n})^{n+1,\beta}$ is the principle redex of $X^{\alpha,n}$
+  \item $(U^{\alpha,n+1} V^{\beta,n})^{n,\gamma}$ is the principle redex of
+    \begin{enumerate}[(a)]
+      \item $U^{\alpha,n+1}$ if $U$ is a variable or an application abnd the principle redex exists, else the principle redex of $V^{\beta,n}$
+      \item if $U^{\alpha,n+1} = (\l y^{m}Y^{\delta,m})^{m+1,\alpha',n+1}$ then
+        \begin{enumerate}[(i)]
+          \item $\alpha'$ contains $0$, then the principle redex of $Y^{\delta,m}$ if it exists, else
+          \item $y \not\in \FV(Y)$ then the principle redex of $V$ if it exists, else $Y$.
+        \end{enumerate}
+    \end{enumerate}
+\end{enumerate}
+
+At this point [(1)(a)(ii)] we have a term of the form:
+\begin{equation*}
+  ((\l u^{n,}U^{\alpha,n})^{n+1,\beta,m+1}V^{\gamma,m})^{m,\delta}
+\end{equation*}
+
+\begin{enumerate}[(1)]
+  \item 0 in $\beta$
+  \item no $0$ in $\beta$, $u \not\in \FV(U)$ principlal redex to be the one for $V$ if it exists.
+  \item Potential
+\end{enumerate}
+
+We want to demonstrate that the perpetual reduction strategy always contracts the principle redex.\\
+
+\textbf{Lemma:} if $X^{\alpha} \in $ SN and $Y^{\beta,n} \in $ SN where $y^n \in \FV(X)$. It then makes sense to apply $[Y^{\beta,n}/y^{n}]X^{\alpha}$.\\
+
+\textbf{Proof:} We first look at the special case of $Y^{\beta,n} = (xY_1\ldots Y_m)^{\beta,n}$. $X^{\alpha}$ is strongly normalizable, so the reduction tree of $X^\alpha$ is finite and of size $t$. $X^{\alpha}$ also has a length, $\ell$. We can induct on pairs $(t,\ell)$.
+
+\begin{center}
+  \begin{tikzpicture}
+    \draw[thick,->] (-.5,0) -- (2,0);
+    \draw[thick,->] (0,-.5) -- (0,2);
+    \draw (0,1) node[anchor=east] {$t$};
+    \draw (1,0) node[anchor=north] {$\ell$};
+  \end{tikzpicture}
+\end{center}
+
+We establish a lexicographic ordering on the points whereby $(t,\ell) > (t',\ell')$ if $t > t'$ or if $t = t'$ and $\ell > \ell'$.\\
+
+If $X = y$, then $\alpha = n,\alpha'$. So when we perform the substitution, we get
+\begin{equation*}
+  [Y^{\alpha,n}/y^n]X^{\alpha} = (xY_1\ldots Y_m)^{\beta,n,\alpha'}
+\end{equation*}
+Note that $Y^{\beta,n} \in \SN \Leftrightarrow Y_1,\ldots,Y_m \in \SN$.\\
+
+\textit{Induction Step:} We have the following cases:
+\begin{itemize}
+  \item $X = zX_1\ldots X_k$ and $z \not= y.$
+  \item $[Y/y]X = z([Y/y]X_1)\ldots([Y/y]X_{1_2})$ use $\ell$.
+  \item $X = (\l zX_0)X_1\ldots X_k$.
+  \item $[Y/y]X = (\l z [Y/y]X_0)([Y/y]X_1)\ldots([Y/y]X_k)$.
+\end{itemize}
+
+We now again have several cases: if $0$ is in the potential, then $z \not\in \FV(X_0)$  principle redex cases for $X_1$.
+
+\end{document}

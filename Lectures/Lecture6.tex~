@@ -1,0 +1,98 @@
+\chapter{Lecture 6}
+\lhead{January 26, 2015}
+\chead{21-366 Lambda Calculus Lecture 6}
+
+\def\uline#1{#1}
+\def\uwavy#1{#1}
+
+\section{Redex Creation}
+We take a term $U$ with subterm $(\l xX)Y$, and create a term $V$ with subterm $[Y/x]X$. Old redexes have 0 or more residuals in $V$. Now we peek into $X$: $(\l xX)Y$ is actually $((\l x(\l zZ))Y)W$. We can contract it into $(\l z[Y/x]Z)$.
+
+\section{Computing With $\l$ Terms}
+To do computations, we need data structures. How do we represent data structures? We need a collection of terms that look like a data structure. Take, for example, the natural numbers (plus zero) as a data structure, with multiplication and addition. $(\mathbb{N}, 0, 1, +, *)$. We want additionally for the terms to follow certain axioms.\\
+
+\section{Data Structures}
+\subsection{Finite Sets}
+\index{Finite Set|textbf}
+\textbf{Example:} Finite sets of size $n$ with all functions. (This was studied by the logician Frege\index{Frege, Gottlob}.) Let us look at $\l$ terms. We can write $\l x_1\ldots x_n.x_i$ for some $i \in N$.\\
+e.g.: $n = 2$
+\begin{eqnarray*}
+  \l x_1x_2.x_1\\
+  \l x_1x_2.x_2\\
+\end{eqnarray*}
+We call these terms $K_i^n$, where $n$ is the number of terms, and $i$ is the index of the term. So we have
+\begin{equation*}
+  K_i^nX_1\ldots X_n =_\beta X_i
+\end{equation*}
+This calculates $(\l x_i x_{i+1} \ldots x_n.x_i) \rightarrow_\beta (\l x_{i+1}\ldots x_n . X_i)X_{i + 1} \ldots X_n \twoheadrightarrow_\beta X_i$. The function $K_i^n$ allows us to do table lookup functions.\\
+
+Let us say that we have a finite set $\{1,\ldots,n\}$, and we want to create the function $f:\{1,\ldots,n\} \rightarrow \{1,\ldots,n\}$. If we have a term $T_f$, and we apply it to a term $K_i^n$. This should be beta equal to $K_f(i)^n$.
+\begin{equation*}
+  (T_fK_i^n) =_\beta K_{f(i)}^n
+\end{equation*}
+
+But what is $T_f$? It depends on $f$.
+\begin{equation*}
+  T_f := \l a.a(K_{f(1)}^nK_{f(2)}^n\ldots K_{f(n)}^n)
+\end{equation*}
+
+\textbf{Example:} Does this work?
+\begin{equation*}
+  T_fK_i^n \rightarrow_\beta K_i^n K_{f(1)}^n K_{f(2)}^n \ldots K_{f(n)}^n \twoheadrightarrow_\beta K_{f(i)}^n
+\end{equation*}
+
+Any function $f:\{1,\ldots,n\} \rightarrow \mathbb{S}$ can be created by this lookup table strategy. But now let us say that $f : \{1,\ldots,n\} \times \{1,\ldots,n\} \rightarrow \{1,\ldots,n\}$, or $f(i,j)$. We can use Currying to represent this function. We can define $f_i(j) := f(i,j)$, and redefine $T_f := \l a.aT_{f_1}T_{f_2}\ldots T_{f_n}$.\\
+
+\subsection{Booleans}
+\index{Boolean|textbf}
+Generally, if $T$ is a term, then $T_* = TI$. So $K_* = KI = (\l xy.x)I \rightarrow_\beta \l yI = \l y \l zz = \l yz.z$ So, we call $K$ true, and $K_*$ false. (Or vice versa. A familiarity with Boolean algebra will remind you that it doesn't matter which symbol is which.) This definition for booleans will be useful in a couple of paragraphs for conditional statements.
+
+\subsection{Integers}
+\index{Integer|textbf}
+It is somewhat difficult to implement integers, but what we can implement straightforwardly is the nonnegative integers\footnote{This class uses the convention that $\mathbb{N} := 0,1,2,...$} $0,1,2,...$. Consider that
+\begin{equation*}
+  \underbrace{a \cdot a \cdot ... \cdot a}_{n\hbox{ times}} = a^n
+\end{equation*}
+We can consider this statement as representing the number $n$. In $\l$ calculus, we write this as:
+\begin{equation*}
+  \uline{n} := \l xy . (\underbrace{x(x(\ldots *x}_{n}y))\ldots)
+\end{equation*}
+We can define a successor function\index{Successor Function} which takes a number $n$ encoded in our integer representation, and increments it to return $n + 1$:
+\begin{equation*}
+  \uline{s}\ \uline{n} \twoheadrightarrow_\beta \uline{n + 1}
+\end{equation*}
+Notice that
+\begin{equation*}
+  x(\uline{n}\ xy) \twoheadrightarrow_\beta \underbrace{x(\ldots (x}_{n + 1}y)\ldots)
+\end{equation*}
+So we should define
+\begin{equation*}
+  \uline{S} := \l z(\l xy.(x(zxy))).
+\end{equation*}
+
+There is another method. We previously added a new $x$ to the left side. But we could alternately add a new $x$ to the right side, instead:
+\begin{equation*}
+  (\l z \l xy.(zx(xy)))
+\end{equation*}
+We have access to both ends of the list of $x$s, but not to the middle.
+
+\subsubsection{Addition}
+How do we calculate $\uline{+}\ \uline{n}\ \uline{m}$? We want:
+\begin{equation*}
+  \l xy. \uline{n}x(\uline{m}xy)
+\end{equation*}
+So we can define $\uline{+}$ as:
+\begin{equation*}
+  \uwavy{+} := \l uv.\l xy.(ux(vxy))
+\end{equation*}
+
+\subsubsection{Subtraction}
+We can see that addition will never result in a number which is not in our set of (nonnegative) integers. A problem arises, however, when we attempt to define subtraction. Defining subtraction as the inverse of addition is unsatisfactory, as many expressions involving subtraction would just not have solutions. To keep subtraction closed on the set of nonnegative integers, we define monus subtraction\index{Monus Subtraction} as
+\begin{equation*}
+  n \dotdiv m = 0 \hbox{ if } m \geq n \hbox{ else } n - m
+\end{equation*}
+Monus subtraction is not exactly the integer subtraction that we are used to, but it solves the problem of $A - B$ being undefined whenver $B > A$.
+
+\section{The Conditional $\supset$(Boolean)$XY$}
+\index{Conditional}
+Above, we defined the booleans $K$ and $K_*$. To perform general computations, it would be useful if we could branch on these booleans. Specifically, we want $\supset KXY = X$ and $\supset K_*XY = Y$. We define $\supset := I$. Remember that $I = (\l x.x)$. So $IX \rightarrow_\beta X$.

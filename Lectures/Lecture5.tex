@@ -1,0 +1,152 @@
+\chapter{Lecture 5}
+\lhead{January 23, 2015}
+\chead{21-366 Lambda Calculus Lecture 5}
+
+% Make Peaks and Valleys in beta redution pictures.
+\section{Reductions}
+Note that we hide $\alpha$ conversions while we do more interesting things. We will also concentrate on $\beta$ reduction.\index{Beta Reduction} $\eta$ reduction\index{Eta Reduction} is somewhat trivial.
+\subsection{$\beta$ Reduction}
+\begin{equation*}
+  \underbrace{(\l xX)Y}_{\hbox{Redex}} \rightarrow_\beta \underbrace{[Y / x]X}_{\hbox{reductum}}
+\end{equation*}
+\index{Redex}\index{Reductum}
+{\begin{center} $\rightarrow$ contraction $\rightarrow$ \end{center}}
+\subsection{$\eta$ Reduction}
+\begin{equation*}
+  \underbrace{\l x(Xx)}_{\hbox{redex}} \rightarrow_\eta \underbrace{X}_{\hbox{reductum}} \hspace{.5in} x \not\in FV(X)
+\end{equation*}
+ Additionally note that we call it ``reduction,'' but it is entirely possible that the reductum is equal in length to or longer than the redex. For example:
+\begin{eqnarray*}
+  1)\ (\l x x)Y &\rightarrow_\beta& Y\\
+  2)\ (\l xy.x)YZ &\rightarrow_\beta& (\l yY)Z\\
+  (\l x (\l yx))Y &\rightarrow_\beta& [Y/x](\l yx) = \l yY\\
+  &\rightarrow_\beta& Y
+\end{eqnarray*}
+
+\subsection{$\omega$ and $\Omega$}
+We now introduce a pair of term $\omega$ and $\Omega$ which often come up as the counterexamples to otherwise true claims in lambda calculus.
+\begin{eqnarray*}
+  \omega &:=& \l x (xx)\\
+  \Omega &:=& (\omega\omega) = (\l x(xx))(\l x(xx))
+\end{eqnarray*}
+\textbf{Definition:} If $FV(X) = \emptyset$, then $X$ is said to be \textbf{closed,} or a \textbf{combinator.}\index{Combinator} (Here we can also say that $X$ is a closure.) Now we define a step beyond $\Omega$:
+\begin{eqnarray*}
+  \Omega^+ := (\l x (xxx))(\l x (xxx))
+\end{eqnarray*}
+What happens if we apply $\Omega^+$ to itself?
+\begin{equation*}
+  \Omega^+\Omega^+ \rbeta (\Omega^+\Omega^+)\Omega^+ \rbeta \Omega^+\Omega^+\Omega^+\Omega^+
+\end{equation*}
+
+We can also refer to situations where the redex is inside a larger term as a beta reduction. Imagine that $U$ has a subterm $(\l x X)Y$. We can write that $U \rbeta V$ when $V$ has a subterm $[Y/x]Y$. So beta reduction can occur on subterms.\\
+
+Interestingly, if you are given $U$ and $V$, and that $U \rbeta V$, you cannot tell what subterms are being reduced. The (essentially only) counterexample is $\Omega$:
+\begin{equation*}
+  x\Omega\Omega \rightarrow x\Omega\Omega
+\end{equation*}
+
+Now we want to generalize this to many steps. This is called a \textbf{transitive closure.} We notate transitive closure\index{Transitive Closure} as
+\begin{equation*}
+  U \twoheadrightarrow V
+\end{equation*}
+if there exists a sequence $U = U_0 \rbeta U_1 \rbeta \cdots \rbeta U_n = V$. $n$ can be zero, in which case $U = V$, and we allow $U$ to reduce to itself. This is conventional, and it doesn't hurt anything.\\
+
+We say that $U =_\beta V$ (read as $U$ is beta equivalent\index{Beta Equivalent} to $V$) if there exists a sequence $U = U_0 \cdots U_{n-1} U_n = V$ such that
+\begin{equation*}
+  U_0 \twoheadrightarrow_\beta U_1 \twoheadleftarrow_\beta U_2 \twoheadrightarrow_\beta U_3 \cdots \twoheadleftarrow_\beta U_{n-1} \twoheadrightarrow_\beta U_n = V
+\end{equation*}
+Note that beta equivalence is transitive:
+\begin{equation*}
+  U =_\beta V, V =_\beta W \Rightarrow U =_\beta W
+\end{equation*}
+Example of beta equivalence:
+\begin{eqnarray*}
+  (\l xy.x)\Omega\Omega \twoheadrightarrow_\beta \Omega \twoheadleftarrow_\beta (\l xy.x)\Omega\Omega^+
+\end{eqnarray*}
+We can therefore say that $(\l xy.x)\Omega\Omega =_\beta (\l xy.x)\Omega\Omega^+$.\\
+
+TODO: MAKE SURE $K$ IS DEFINED IN A NOTICEABLE WAY. IT IS REFERENCED LATER.\\
+Another example: Let $K := \l xy.x$ and $I := \l x.x$
+\begin{equation*}
+  \omega K \omega \twoheadrightarrow_\beta (KK)\omega \twoheadrightarrow_\beta K \twoheadleftarrow_\beta IK
+\end{equation*}
+
+A third example: $xXY$. If $X \rbeta X^+$ and $Y \rbeta Y^+$.
+\begin{equation*}
+  xXY^+ \twoheadleftarrow_\beta xXY \twoheadrightarrow_\beta xX^+Y
+\end{equation*}
+
+\section{Properties of Beta Equivalence}
+Beta equivalence satisfies the properties of an equivalence relation.
+\begin{itemize}
+  \item $U =_\beta U$
+  \item if $U =_\beta V$ then $V =_\beta U$
+  \item if $U =_\beta V$, $V =_\beta W$, then $U =_\beta W$
+\end{itemize}
+We then have the following properties:
+\begin{enumerate}
+  \item $(\l x X)Y \twoheadrightarrow_\beta [Y/x]X$
+  \item if $X \twoheadrightarrow_\beta Y$, $U \twoheadrightarrow_\beta V$, then $(XU) \twoheadrightarrow_\beta (YV)$.
+  \item if $X \twoheadrightarrow_\beta Y$, then $(\l xX) \twoheadrightarrow_\beta (\l xY)$.
+\end{enumerate}
+Similar properties hold for $=_\beta$ as do for $\twoheadrightarrow_\beta$.
+
+\section{Redex Creation}
+We take a term $U$ with subterm $(\l xX)Y$, and create a term $V$ with subterm $[Y/x]X$. Old redexes have 0 or more residuals in $V$. Now we peek into $X$: $(\l xX)Y$ is actually $((\l x(\l zZ))Y)W$. We can contract it into $(\l z[Y/x]Z)$.
+
+\section{The Church-Rosser Theorem}
+\index{Church-Rosser Theorem}
+%Actually proven by Church, Rosser, and Kleene.
+Does the order in which we perform reductions on a lambda expression matter? This is an important question. If different orders of reduction could be applied to lambda terms to achieve different results, this would have uncomfortable implications for lambda calculus as a model for computation.\\
+
+Imagine that we had a term $X$ which reduced to two separate terms $X'_1$ and $X'_2$ depending on the order in which reductions are applied. We must have that $X'_1 \not= X'_2$, otherwise we could simply reduce one into the other. But we also have that $X = X'_1$ and $X = X'_2$. By transitivity, this implies that $X'_1 = X'_2$, which contradicts our assumption. This contradiction would be a problem. The proof that this contradiction does not occur was published in $1936$ by Alonzo Church and J. Barkley Rosser.\\
+
+\margnot{Church and Rosser's Paper}{ Church and Rosser published this proof as ``Some Properties of Conversion'' in the journal \textit{Transactions of the American Mathematical Society}. It is available at \footnotesize\texttt{http://www.jstor.org/ stable/1989762}}
+
+\examplebox{The Church-Rosser Theorem}{ If $X =_\beta Y$, then there exists a term $Z$ such that $X \twoheadrightarrow_\beta Z$ and $Y \twoheadrightarrow_\beta Z$. Graphically, we can draw this relationship as:
+\begin{center}
+  \begin{tikzpicture}
+    \draw (0,0) node {$X$};
+    \draw (1,1) node {$X_1$};
+    \draw (2,0) node {$X_2$};
+    \draw (3,1) node {$X_3$};
+    \draw (4,0) node {$\ldots$};
+    \draw (5,1) node {$X_{n-2}$};
+    \draw (6,0) node {$\hphantom{xx}X_{n-1}$};
+    \draw (7,1) node {$X_{n}$};
+    \draw (8,0) node {$Y$};
+
+    \draw[thick,->] (0.2,0.2) -- (0.8,0.8);
+    \draw[thick,<-] (1.2,0.8) -- (1.8,0.2);
+    \draw[thick,->] (2.2,0.2) -- (2.8,0.8);
+    \draw[thick,<-] (3.2,0.8) -- (3.8,0.2);
+    \draw[thick,->] (4.2,0.2) -- (4.8,0.8);
+    \draw[thick,<-] (5.2,0.8) -- (5.8,0.2);
+    \draw[thick,->] (6.2,0.2) -- (6.8,0.8);
+    \draw[thick,<-] (7.2,0.8) -- (7.8,0.2);
+
+    \draw[thick,dashed,->>] (0.2,-0.2) -- (3.8,-3.8);
+    \draw[thick,dashed,->>] (7.8,-0.2) -- (4.2,-3.8);
+
+    \draw (4,-4) node {$Z$};
+  \end{tikzpicture}
+\end{center}
+In the above picture, solid arrows represent existing $\beta$ conversions, which might be empty (that is, they might be of the form $X \rightarrow_\beta X$.) Dashed arrows represent $\beta$ conversions which are implied by the theorem.
+}
+
+\subsection{Proof of Church-Rosser}
+Our proof of the Church-Rosser theorem is based on the intuition that if we could somehow convert ``peaks'' in our diagram into ``valleys,'' we could construct the reductions $X \twoheadrightarrow_\beta Z$ and $Y \twoheadrightarrow_\beta Z$.\\
+
+We first look at techniques for creating new redexes from old redexes. We have some term $U$ such that $\Delta := (\l xX)Y$ is a subterm of $U$. We can contract with beta reduction this term into a $V$ such that $[Y/x]X$ is a subterm of $V$. Now consider another subterm $\Gamma$. There are three cases:\\
+
+\textbf{Case 1:} $\Delta \subset \Gamma$\\
+$\Gamma'$ reappears in $V$ as a redex we call the \textit{residual} of $\Gamma$.\\
+
+\textbf{Case 2:} $\Delta$ disjoint from $\Gamma$\\
+If they are disjoint, then $\Gamma$ is contained in $U$ and $V$, and $\Gamma$ is its own residual.\\
+
+\textbf{Case 3:} $\Gamma \subset \Delta$\\
+\textbf{Subcase 3.1:} $\Gamma \subseteq Y$\\
+$\Gamma$ may have many residuals in $V$. There is also the possibility that $x$ does not occur at all in $X$, and there are no residuals. So $\Gamma$ can have zero or more residuals in $V$.\\
+\textbf{Subcase 3.2:} $\Gamma \subseteq \l xX$\\
+$\Gamma$ now looks like $[Y/x]\Gamma$. If $\Gamma$ has $x$ as a free variable, then the residual of $\Gamma$ is $[Y/x]\Gamma$.\\

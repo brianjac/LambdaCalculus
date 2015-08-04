@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+
+\input{../Polished/macros.tex}
+
+\lhead{March 18, 2015}
+\chead{21-366 Lambda Calculus Lecture 24}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Diamond Property for Reductions}
+\subsection{Beta Reduction}
+\subsection{Eta Expansion}
+\begin{eqnarray*}
+  U^{\alpha,n+1,n+2,\beta} &\rightarrow& (\l u^{n+1,n}(U^{\alpha,n+1}u^{n+1,n})^{n,n+1})^{n+2}\\
+  U^{\alpha,n+2,n+1,\beta} &\rightarrow& (\l u^{n,n+1}(U^{\alpha,n+2}u^{n,n+1})^{n+1,n})^{n+1}
+\end{eqnarray*}
+
+\subsection{Potential Reductions}
+\begin{eqnarray*}
+  (U^{\alpha,n+1,n+2}V^{\beta,n+1})^{n+1,\gamma} &\rightarrow& (U^{\alpha,n+1}V^{\beta,n+1,n})^{n,n+1,\gamma}\\
+  (U^{\alpha,n+2,n+1}V^{\beta,n})^{n,\gamma} &\rightarrow& (U^{\alpha,n+2}V^{\beta,n,n+1})^{n+1,n,\gamma}\\
+  (\l u^{n,}U^{\alpha,n})^{n+1,n+2,\gamma} &\rightarrow& (\l u^{n+1,n}U^{\alpha,n,n+1})^{n+2,\gamma}\\
+  (\l u^{n+1}U^{\alpha,n+1})^{n+2,n+1,\gamma} &\rightarrow& (\l u^{n,n+1}U^{\alpha,n+1,n})^{n+1}
+\end{eqnarray*}
+To prove the diamond property for reductions, any reduction tree without potential can be given potential.
+\begin{enumerate}[(1)]
+  \item Every $\beta$ reduction sequence terminates. (add clockwise rotation)
+  \item Every eta expansion sequence terminates.
+  \item Every potential reduction sequence terminates.
+\end{enumerate}
+
+\section{Tools for Proving Termination}
+\subsection{Multiset Ordering}
+A multiset is a set with multiplicity. Vaguely, a multiset is a finite set of natural numbers where each integer can occur more than once. The simplest example would be the set $\{n,n\}$, where the integer $n \in \mathbb{Z}$. A multiset is an assignment of nonnegative integers to the nonnegative integers, i.e. a function $f:\mathbb{N}\mapsto\mathbb{N}$ such that there exists $m \in \mathbb{N}$ such that for all $n \geq m, f(m) = 0$. A third definition: A multiset is a finite list of nonnegative integers modulo order.\\
+
+We can order multisets as follows: $X > Y$ if there is an element $x \in X$ and a multiset $Z$ such that for each $z \in Z$, $z < x$ and $Y = X \setminus \{x\}$. That is to say, we say $X = \{\ldots,x,\ldots\}$ and $Z = \{z_1,\ldots,z_k\}$ for some $k \in \mathbb{N}$ and then do $X = \{\ldots,z_1,\ldots,z_k\ldots\}$.\\
+
+\textbf{Theorem:} There is no infinite sequence of multisets $X_0 > X_1 > X_2 > \ldots > X_k > \ldots$. Recall K\"onig's Lemma: A tree which is finitely branching and infinite has an infinite path.\\
+
+Suppose that we have an infinite descending sequence $X_n$ of multisets. A finitely branching tree of nonnegative integers. At any given stage the current $X_i = $ the leaves of this tree. Note that this tree has infinite nodes. However by K\"onig's lemma, this finitely branching tree must have an infinite path. This is a contradiction.\\
+\end{document}

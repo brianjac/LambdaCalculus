@@ -1,0 +1,51 @@
+\chapter{Lecture 38}
+\lhead{April 22, 2015}
+\chead{21-366 Lambda Calculus Lecture 38}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Notation}
+Given a closed term $M$, $M$ ``defines'' a partial function $\phi_M : \mathbb{N} \mapsto \mathbb{N}$ where the domain of $\phi_M \subseteq \mathbb{N}$.
+
+\begin{equation*}
+  \phi_M(m) = n \Leftrightarrow M\uline{m} =_\beta \uline{n}
+\end{equation*}
+
+\subsection{Examples:}
+\begin{enumerate}[(1)]
+  \item $M = I$, so $\phi(m) = m$.
+  \item $\Omega$ $\Omega\uline{m}$ has no normal form, so $\phi_m$ is undefined.
+\end{enumerate}
+Recall: We defined $S \subseteq \mathbb{N}$ is \textbf{recursively enumerable} if there exists $M$ such that
+\begin{enumerate}
+  \item $\phi$ is total
+  \item The ring $\phi_M = S$
+\end{enumerate}
+
+More generally, suppose that $R \subseteq \mathbb{N}^n$.
+\begin{eqnarray*}
+  M_1,\ldots,M_n \in \mathbb{N}\\
+  R(M_1,\ldots,M_n)
+\end{eqnarray*}
+Illustrate: $n = 2$. Definition. $R \in$ Recursively enumerable if...
+
+\subsection{Pairing Function}
+Bijection $\mathbb{N}^2 \Leftrightarrow \mathbb{N}$. Recall that every positive integer $k$ can be written as $2^\alpha(2\beta + 1)$. So $(\alpha,\beta) \leftrightarrow k+1 / k$.
+
+\subsection{Properties of R.E. sets and relations}
+\begin{enumerate}[(1)]
+  \item R.E. sets are closed under $\cap,\cup$\\
+    \textbf{Proof:} The union of recursively enumerable sets $S_1,S_2$, as terms $M_1,M_2$. $M =$ if $x = zy$ then $M_1y$, if $x = zy + 1$, then $M_2y$\\
+    $sg(x \monus \lfloor\dfrac{x}{2}\rfloor \cdot 2)(M_1\lfloor\dfrac{x}{2}\rfloor)(M_2\lfloor\dfrac{x}{2}\rfloor)$\\
+  \textbf{Intersection:} We assume that $S_1 \cap S_2 \not= \emptyset$. Find an integer $n \in S_1 \cap S_2$.\\
+    \begin{eqnarray*}
+      S_1 &=& \{n : \hbox{there exists }k_1\phi_{M_1}(k_1) = \}\\
+      S_2 &=& \{n : \hbox{there exists }k_2\phi_{M_2}(k_2) = \}\\
+      S_1 \cap S_2 &=& \{\phi_{M_1}(k_1) : \hbox{there exists }k_2\phi_{M_1}(k_1) = \phi_{m_2}(k_2)\}
+    \end{eqnarray*}
+    Now we write $x = (y_1,y_2)$ and $M_1y_1 = M_2y_2$, then output $M_1y_1$.
+  \item $S \subseteq \mathbb{N}$ is recursive $\Leftrightarrow$ $S$ and $\overline{S}$ are recursively enumerable.\\
+    \textbf{Proof:} if $S \subseteq \mathbb{N}$ is recursive and $S \not= \mathbb{N}, S \not= \emptyset$. Pick some element $n \in S$. We have $M$ such that $M\uline{n} = K$ if $n \in S$ and $= K_*$ if $n \not\in S$.\\
+    Case 1: $S$ is finite. $S = \{n_1,\ldots,n_k\}$.
+\end{enumerate}
+\textbf{Theorem}: THe following are equivalent: 1. $S $ is RE. 2. There exists $M$ such that $S$ is the domain of $\phi_M$. 3. There exists an $M$ such that $S$ is the range of $\phi_M$.

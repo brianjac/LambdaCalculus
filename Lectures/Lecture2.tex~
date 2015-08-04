@@ -1,0 +1,127 @@
+
+\chapter{Lecture 2}
+\lhead{January 14, 2015}
+\chead{21-366 Lambda Calculus Lecture 2}
+
+\section{Construction Trees}
+\index{Construction Tree|textbf}
+
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$(XY)$ [ $X$ ] [ $Y$ ] ]
+  \end{tikzpicture}
+  \hspace{1in}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$(\l xX)$ [ $X$ ] ]
+  \end{tikzpicture}
+\end{center}
+
+Proper pairings of parens are unique. Each term has a proper pairing. Therefore construction trees are unique.\\
+
+\noindent\textbf{Proof: } Given a term, construct its tree. If no parens, then it is a variable. If there are parens, then we begin with a left paren. It must be paired with the rightmost (last) right paren. Otherwise, there is a crossing.\\
+
+If the first symbol is a variable, then we are in this situation:\\
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$(x\ Y)$ [.$x$ ] [.$Y$ ] ]
+  \end{tikzpicture}\\
+\end{center}
+We can then induct on $Y$.\\
+
+If the first symbol is a (left) paren, then we must be in this form:
+\begin{equation*}
+  (\underbrace{(\ \ )}_{X}\ \underbrace{(\ \ )}_{Y})
+\end{equation*}
+We say that $X$ is in function position\index{Function Position}, and $Y$ is in argument position\index{Argument Position}. We can then construct the tree by inducting on both $X$ and $Y$.\\
+
+If the first symbol is a \l , then it must be followed by a variable, and it must furthermore be followed by another variable:
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$(\l zX)$ [.$X$ ] ]
+  \end{tikzpicture}
+\end{center}
+
+\section{Application}
+\textbf{Definition: } Let $Y$ be a term. $Y$ is a subterm of $X$ if $Y$ is also a substring of $X$, with the exception of a variable following a \l.\\
+
+\noindent\textbf{Example: }
+\begin{eqnarray*}
+  S := (\l x\ (\l y\ (\l z\ ((xz)(yz)))))
+\end{eqnarray*}
+
+\noindent\textbf{Definition:} Free and Bound Variables.\index{Free Variable}\index{Bound Variable}
+\begin{center}
+  \begin{tikzpicture}
+    \Tree[.$X$ [.{} ] [.$(\l yY)$ [.{} ] [.{} ] [.{} ] ]  [.{} ] ]
+  \end{tikzpicture}
+\end{center}
+Some definitions:
+\begin{eqnarray*}
+  FV(x) &=& \{x\}\\
+  BV(x) &=& \emptyset\\
+  FV((XY)) &=& FV(X) \cup FV(Y)\\
+  BV((XY)) &=& BV(X) \cup BV(Y)\\
+  FV((\l xX)) &=& FV(X) - \{x\}\\
+  BV((\l xX)) &=& BV(X) \cup \{x\}\\
+\end{eqnarray*}
+
+\noindent\textbf{Examples: }
+\begin{eqnarray*}
+  ( (xx)(\l x(xx)) )
+\end{eqnarray*}
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$((xx)(\l x(xx)))$ [ {} ] [ {} ] ]
+  \end{tikzpicture}
+\end{center}
+\begin{eqnarray*}
+  BV( (\l x(\l x X)) ) = BV(X) \cup \{X\}
+\end{eqnarray*}
+
+\noindent\textbf{Trichotomy Law: }\index{Trichotomy Law} Given any two subterm occurances\footnote{In this course, subterm occurances will be notated with primes.} $Y',Z'$ of a term $X$, then either they are disjoint or one contains the other.\\
+
+\subsection{A Different Approach (Polish Notation)}
+\index{Polish Notation}
+Invented by Jan \L uckasevicz\index{Lusckasevicz, Jan@\L usckasevicz, Jan} in 1924. If we have the terms $(, \l, x, y, z$ where $x, y, z$ are variables, if terms $X,Y$ and $x$ is a variable, we can write
+\begin{eqnarray*}
+  (XY\\
+  \l xX
+\end{eqnarray*}
+
+\noindent\textbf{Fact:} There is a unique construction tree for each term.\\
+
+\noindent\textbf{Lemma: } No term is a proper extension of another term as a string read from left to right.\\
+
+\textbf{Proof: } We can prove this by induction on the sum of the lengths of the two sequences. The smallest sequence is a variable $x$. No term can be an extension of a variable because a left paren is necessary. \\
+
+Induction step: we have a term $X$ with an extension $Y$.\\
+
+Case 1: Assume $X$ has the form $X = \l uU$. The only way to extend $X$ is if $Y$ begins with $\l u$, which can only become a term if it becomes $\l uV$, which implies that $U$ is extended by $V$. We can then induct on $U$ and $V$.\\
+
+Case 2: $X = (UV$. Therefore $Y$ must begin with a paren, and so be of the form $Y = (ZW$. This implies that $ZW$ is an extension of $UV$. This means that $U = Z$ and $V = W$ by the induction hypothesis, and so extension cannot occur. This implies unique construction trees. \qed\\
+
+\subsection{Abbreviations}
+We will adopt some conventions for not writing all of the parens.
+\begin{itemize}
+  \item Church's ``dot'' notation\index{Church, Alonzo!Church's Dot Notation} (developed by Quine\index{Quine, Willard Van Orman}).
+\end{itemize}
+We have some construction of the form
+\begin{equation*}
+  (\l x_1(\l x_2(\l x_3\ ...(\l x_n ---)\ ...\ )))
+\end{equation*}
+We can write this as
+\begin{equation*}
+  (\l x_1x_2...x_n\cdot ---)
+\end{equation*}
+
+\begin{itemize}
+  \item Left Association\index{Left Association}
+\end{itemize}
+If we have an expression
+\begin{equation*}
+  (X\ Y)
+\end{equation*}
+then $X$ is in the function postion\index{Function Position} and $Y$ is in the argument position\index{Argument Position}. With left association, we delete all parens of applications where the subterm is not in argument position. We also retain the outermost parens.
+\begin{equation*}
+  S := \l xyz\cdot xy(yz)
+\end{equation*}

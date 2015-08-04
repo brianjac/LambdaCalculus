@@ -1,0 +1,47 @@
+\chapter{Lecture 31}
+\lhead{April 3, 2015}
+\chead{21-366 Lambda Calculus Lecture 31}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Proof of B\"ohm's Theorem}
+\textbf{Recall:} $M$,$N$ in $\beta$-normal form. $M \not=_\beta N$.\\
+
+\textbf{Claim:} There exists $P_1\ldots P_\ell$ such that
+\begin{eqnarray*}
+  MP_1\ldots P_\ell K\\
+  NP_1\ldots P_\ell K_*\\
+\end{eqnarray*}
+\textbf{Remark:} By $\eta$ expansions we can assume that the B\"ohm trees of $M$ and $N$ are the same ``abstract'' tree. That is, the trees are the same without labels.\\
+
+\textbf{Proof:} The proof is by induction on the depth of the first place where these two B\"ohm trees actually differ.\\
+
+The basis case is when the two B\"ohm trees differ at the root, i.e. $M = \l x_1\ldots x_m.x_iX_1\ldots X_t$ and $\l y_1 \ldots Y_n . y_j Y_1\ldots Y_t$.\\
+
+There are two cases.
+\begin{enumerate}[(1)]
+  \item $n \not= m$ so we assume without loss of generality that $m > n$
+\end{enumerate}
+We define
+\begin{equation*}
+  K_*^k := \l z_1\ldots z_k I
+\end{equation*}
+so that $K_*^1 = K_*$.
+We then write for $r \geq t$
+\begin{equation*}
+  M\underbrace{K_*^{r}\ldots K_*^{r}}_{m} =_\beta K_*^{r}X_1^+\ldots X_t^+ =_\beta K_*^{r-t}
+\end{equation*}
+And
+\begin{equation*}
+  N\underbrace{K_*^{r}\ldots K_*^{r}}_{m} =_\beta K_*^{r}Y_1^+ \ldots Y_t^+ K_*^{r} \ldots K_*^{r} \rightarrow_\beta K_*^{r-t}\underbrace{K^r\ldots K^r}_{m - n} =_\beta K_*^{r-t+m-n}
+\end{equation*}
+Pick $r$ such that these two terms reduce to terms of the form $K_*^\alpha$ and $K_*^\beta$ where $\alpha \not= \beta$.\\
+
+Assume $\alpha > \beta$. It suffices to find $Q_1\ldots Q_s$ such that $K_*^{\alpha}Q_1\ldots Q_s = K$ and $K_*^{\beta}Q_1\ldots Q_s = K_*$. Explicitly, these are $\l x_1\ldots x_\alpha . I Q_1\ldots Q_s$.\\
+
+\textbf{Induction step:} Let
+\begin{eqnarray*}
+  M = \l x_1\ldots x_n . x_i X_1\ldots X_t\\
+  N = \l x_1\ldots x_m . x_i Y_1\ldots Y_t\\
+\end{eqnarray*}
+Let $r$ be the smallest $1 \leq r \leq t$ such that the first place at which they differ is in the pair $X_rY_r$. Consider $x_iX_1\ldots X_t$ and $x_iY_1\ldots Y_t$. Pick an integer $\ell$ which is very large, i.e. $\ell >> t + t$. Substitute $\l y_1\ldots y_\ell \l a. a y_1\ldots y_\ell$ for $x_1$.

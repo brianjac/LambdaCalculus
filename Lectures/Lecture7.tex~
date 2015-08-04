@@ -1,0 +1,146 @@
+\chapter{Lecture 7}
+\lhead{January 28, 2015}
+\chead{21-366 Lambda Calculus Lecture 7}
+
+\section{Structure: The Ring of Nonnegative Integers}
+\index{Integer}
+Previously, we defined $\uline{n}$ to be a lambda representation of the nonnegative integer $n$ written as
+\begin{equation*}
+  \uline{n} = \l xy.\underbrace{(x(\ldots (x}_{n}y)\ldots))
+\end{equation*}
+We can notice that $0$ in this representation is the same as $K_*$, our boolean false.
+\begin{eqnarray*}
+  \uline{0} = \l xy.y
+\end{eqnarray*}
+We defined a successor function\index{Successor Function} which computes $n + 1$ given some $n$.
+\begin{equation*}
+  \uline{s} = \l uxy.x(uxy)
+\end{equation*}
+
+We also defined addition\index{Addition}:
+\begin{equation*}
+  \uline{+} = \l u v x y. u x(v x y)
+\end{equation*}
+
+But what about multiplication? We can define multiplication\index{Multiplication} as
+\begin{equation*}
+  \uline{\cdot} := \l uv u(\uline{+}v)\uline{0}
+\end{equation*}
+We have an example:
+\begin{equation*}
+  \uline{\cdot}\ \uline{n}\ \uline{m} \twoheadrightarrow_{\beta} \uline{n}(\uline{+}\ \uline{m}) \twoheadrightarrow_{\beta} \underbrace{\uline{+}\ \uline{m} (\uline{+}\ \uline{m} ( \ldots (\uline{+}}_{n}\ \uline{m}\ \uline{0}) \ldots ) \twoheadrightarrow_{\beta} \uline{n \cdot m}
+\end{equation*}
+There exists a simpler, alterantive definition:
+\begin{equation*}
+  \uline{\otimes} := \l uv . u(vx)
+\end{equation*}
+
+Again we compute an example for clarity:
+\begin{equation*}
+  \uline{\otimes} \uline{n}\ \uline{m} \twoheadrightarrow_{\beta} \l x (\ \uline{n}\ (\uline{m}\ x)) \twoheadrightarrow_{\beta} (\l x \l w \underbrace{(\ \uline{m}\ x(\ldots (\ \uline{m}}_{n}\ x w))))
+\end{equation*}
+This gives us $n$ nested redexes of the form $\l yx(\ldots(xy)\ldots)(\ \uline{\ \ \ }\ )$
+
+\section{Recursion}
+\index{Recursion|textbf}
+Remark: The $1^{\hbox{st}}$ definition of $\uline{\cdot}$ gives us an idea for doing recursion. Given any term $F$ we can iterate $F$ $T$ times as follows:
+\begin{eqnarray*}
+  F^+ := \l x.xFT\\
+  \hbox{then}\\
+  F^+\uline{n} \twoheadrightarrow_{\beta} (\underbrace{F(\ldots(F}_{n}T))\ldots)
+\end{eqnarray*}
+We can do better. We can define a more advanced form of recursion on integers:
+\begin{equation*}
+  F^+\uline{n + 1}T =_\beta F(F^+\uline{n})T
+\end{equation*}
+Note that
+\begin{equation*}
+  F^+\uline{0}T =_\beta T
+\end{equation*}
+To make this work, we need an auxiliary function $\mathbb{N} \rightarrow$Booleans. We define the sign function\index{Sign Function} and its converse as
+\begin{equation*}
+  sg(n) = \left\{
+  \begin{tabular}{cl}
+    TRUE & $n \neq 0$\\
+    FALSE & $n = 0$\\
+  \end{tabular}
+  \right.
+  \hspace{1in}
+  \uline{\overline{sg}}(n) = \left\{
+  \begin{tabular}{cl}
+    FALSE& $n \neq 0$\\
+    TRUE & $n = 0$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+Now we define these functions as lambda expressions:
+\begin{eqnarray*}
+  \uline{sg} &:=& \l u . u(KK)K_*\\
+  \uline{\overline{sg}} &:=& \l u . u(K_*K_*)K\\
+\end{eqnarray*}
+We observe that this as well works:
+\begin{equation*}
+  \uline{sg}\ \uline{n} \rightarrow_\beta \uline{n}\ (KK)K_* \twoheadrightarrow_{\beta} \underbrace{(KK)(\ldots}_{n}(KK)K_*)\ldots) \twoheadrightarrow_\beta K
+\end{equation*}
+
+\section{Subtraction}
+\index{Monus Subtraction}
+Recall our definition of the monus subtraction function:
+\begin{equation*}
+  n \monus m = \left\{\begin{tabular}{cl}0 & if $m \geq n$\\ $n - m$ & if $m < n$\end{tabular}\right.
+\end{equation*}
+We can redefine this function in terms of itself, recursively:
+\begin{equation*}
+  n \monus m = \left\{
+  \begin{tabular}{cl}
+    $n \monus 0 = n$\\
+    $n \monus (m + 1) = $pred$(n \monus m)$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+
+\subsection{Computing Predecessor}
+\index{Predecessor Function}
+Start with two stacks of $1$'s: $0,0$. Assume that at stage $t$ we have $t,$pred$(t)$. At stage $t + 1$, we have $t + 1, t$. After $n$ iterations, you have $n,$pred$(n)$.\\
+
+Here is another method. Represent pred by \uline{pred}. We need a two stack data structure:
+\begin{equation*}
+  \l a . a\ \uline{n}\ \uline{m}
+\end{equation*}
+We initialize this structure as $\l a.0\ 0$. We then want to apply some sort of operation to this data structure $u$ times:
+\begin{equation*}
+  \l u . u\ \boxed{\hphantom{Oh, god}}\ (\l a . a\ \uline{0}\ \uline{0}\ )
+\end{equation*}
+But what function are we applying in the box?
+\begin{equation*}
+  \boxed{\hphantom{Oh, god}} := \l z . (\l b . b (\uline{s}\ (zk))(zk))k_*
+\end{equation*}
+Now we apply it:
+\begin{equation*}
+  \uline{\hbox{pred}}\ \uline{n}\ \rightarrow_\beta \uline{n}\ (\l z (\l b . b(\uline{s}\ (zk))(zk)))(\l a . a\ \uline{0}\ \uline{0})
+\end{equation*}
+Notice now that we can simulate a $2$ register machine.\\
+
+\textbf{Remark:} $\uline{\otimes} : \l uv\l x . u(vx) = B$. The $B$ stands for ``beweis,'' which is German for ``proof.'' Now let us take $BFG \twoheadrightarrow_\beta \l x\ (F(Gx))$, or $(BFG)x \twoheadrightarrow_\beta F(Gx)$. Notice that $B$ is a combinator.
+
+\section{Combinators}
+\index{Combinator}
+$S$ stands for ``substitution.'' $C$ stands for ``commute.''
+\begin{eqnarray*}
+  I &:=& \l x . x\\
+  K &:=& \l xy . x\\
+  K^* &:=& \l xy . y\\
+  S &:=& \l xyz . xy(yz)\\
+  B &:=& \l xyz . x(yz)\\
+  C &:=& \l xyz . xzy\\
+\end{eqnarray*}
+But now we want a combinator which does this:
+\begin{equation*}
+  \l x \l y_1 \ldots y_n . x y_{\pi(1)} \ldots y_{\pi(n)}
+\end{equation*}
+where $\pi$ is a permutation on $\{1,\ldots,n\}$.\\
+
+We define one last combinator which, given a function $f: \mathbb{N}^2 \rightarrow \mathbb{N}$ gives a function $f^W(n) = f(n,n)$. This function diagonalizes across the naturals.
+\begin{equation*}
+  W := \l x \l y \ xyy
+\end{equation*}

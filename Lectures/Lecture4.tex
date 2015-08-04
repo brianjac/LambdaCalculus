@@ -1,0 +1,126 @@
+\chapter{Lecture 4}
+\lhead{January 21, 2015}
+\chead{21-366 Lambda Calculus Lecture 4}
+
+\section{Substitution}
+\index{Substitution|textbf}
+
+We have been talking about the idea of substitution for a while now, so it's time to formally describe what we mean. Let $X$ be a term with subterm $x$. We say that we are substituting $Y$ for $x$ in $X$ to mean that we are replacing every occurance of $x$ in the construction tree of $X$ with $Y$. We notate this with Curry's\index{Curry, Haskell} substitution prefix\index{Curry, Haskell!Curry's Substitution Prefix}: $[X / x]Y$ read ``substitute $X$ for each free occurance of $x$ in $Y$.'' We call the substitution of a single term a \textbf{single substitution}.\\
+
+\examplebox{Effects of Substitutions}{
+  \begin{eqnarray*}
+    {[X / x]}x &=& X\\
+    {[X / x]}y &=& y\\
+    {[X / x]}(UV) &=& ([X / x]U [X /x]V)\\
+    {[X /x]}(\l uU) &=& \l u[X / x]U\ \ (u \neq x)\\
+    {[X / x]}(\l xU) &=& \l xU\\
+  \end{eqnarray*}
+}
+
+It is possible to perform multiple substitutions at once. We call this \textbf{simultaneous substitution}. A simultaneous substitution is notated by $[X_1/x_1,\ldots,X_n/x_n]Y$. We can also set an order for the substitutions which are performed by writing an expression of the form $[X_{n-1}/x_{n-1}]([X_n / x_n]Y)$, which we call a \textbf{sequential substitution}.\\
+
+It is important to note that simultaneous and sequential substitutions do not necessarily produce the same result. This is because the first substitution to be applied is then substituted by the second, and so on.
+\begin{eqnarray*}
+  [U/u]([V/v]Y) &=& [U/u,[U/u]V/v]Y\\
+\end{eqnarray*}
+
+\examplebox{Example: A Substitution both Simultaneous and Sequential}{
+  Take the substitution of $X/x$ and $Y/X$ into the term $x$. We can see that the simultaneous substitution is
+  \begin{equation*}
+    [X/x,Y/X]x = X
+  \end{equation*}
+  while the sequential substitution is either
+  \begin{equation*}
+    [X/x]([Y/X]x) = X
+  \end{equation*}
+  or
+  \begin{equation*}
+    [Y/X]([X/x]x) = Y
+  \end{equation*}
+  depending on the order in which the substitutions are applied.
+}
+
+\section{What to do about Bound Variables?}
+We have the clash graph of an abstract term. Verticies are occurances of \l's in the term. An edge is between two adjacent \l's. What does it mean to assign new variables to the \l's and maintain the same abstract term such that no two \l's that are adjacent get the same variable? It affects all the variables which are bound by that \l.\\
+
+Any free variables can be bound by adding more \l's at the top. This is called a \textbf{closure}.\\
+\index{Closure}
+
+We can think of renaming the variables of the term $\l [X / x]U$ as attempting to color a graph. How many colors do we need?\\
+
+A \textbf{clique}\index{Clique} in a graph is a set of verticies such that any 2 are adjacent.
+%\begin{tikzpicture}
+  % Clique | Non-Clique
+  % o | 
+  % o--o | o  o
+  % through size 5. Note that size 5 requires one line to jump.
+%\end{tikzpicture}
+If a graph has a clique of size $n$, then you need $n$ colors to color the graph. The converse of this statement is not true. Take for example the graph of a pentagram. It has cliques of size 2, but requires 3 colors to color it.\\% Add picture here
+
+\subsection{How to rewrite a term's bound variables}
+Notice that if we take any \l{} which is closest to the frontier\footnote{That is, that it has no \l's below it.}, then all things which are adjacent to it lie above it. Now if we take any clique in the clash graph, and take any \l{} in that clique which is as close to the frontier as possible, all things adjacent to it lie above it. Additionally, all of them are adjacent to each other.\\
+
+We take the largest clique in the clash graph, and take the lowest possible \l{} and remove it. We now have a term in one less \l. Suppose now that we can rewrite the entire term with the \l{} deleted. We can do this by rewriting the bound variables recursively. If we have another clique of size $n$, we can color our lowest \l{} with the color $x$ and we then have to color the rest of the clique with $n - 1$ colors, giving us $n$ total colors. If we do not have another clique of size $n$, then we can color our lowest \l{} with $x$ and again color the rest with $n - 1$ colors. Thus our maximum number of colors is the size of the largest clique in the clash graph.\\
+
+\section{Equivalence Relations on Terms}
+\index{Equivalence Relation|textbf}
+Intuitively, an equivalence relation on a set is a function $f: (a,b) \mapsto \{\hbox{true},\hbox{false}\}$ which is true only if $a$ is ``equal'' to $b$ in some way. More precisely, if the set is partitioned in some way, then an equivalence relation is true only if the two elements are in the same subset of the partition.\\
+
+An equivalence relation $f$ satisfies the following properties:
+\begin{itemize}
+  \item \textbf{Identity Property:} An element $a$ is equivalent to itself.
+    \begin{equation*}
+      (f(a,a) = \hbox{true})
+    \end{equation*}
+  \item \textbf{Symmetric Property:} If and only if an element $a$ is equivalent to some other element $b$, then $b$ is equivalent to $a$.
+    \begin{equation*}
+      f(a,b) = f(b,a)
+    \end{equation*}
+  \item \textbf{Transitive Property:} If $a$ is equivalent to $b$ and $b$ is equivalent to $c$, then $a$ is equivalent to $c$.
+    \begin{equation*}
+      f(a,b),f(b,c)\Rightarrow f(a,c)
+    \end{equation*}
+\end{itemize}
+
+\subsection{Alpha Conversion}
+\index{Alpha Conversion|textbf}
+Two terms $X$ and $Y$ are $\alpha$ equivalent if one can be derived from the other by changing bound variables. This derivation is called $\alpha$ conversion. The simplest case of alpha conversion is that where $X = \l x X$ and $Y = \l y X$. It is clear that you can convert $X$ into $Y$ by simply replacing the bound variable $x$ with the bound variable $y$. An $\alpha$ conversion which changes only a single bound variable is called an elementary $\alpha$ conversion.\\
+
+The $\alpha$ equivalence relation clearly satisfies the identity property. Any term can be converted into itself by changing no bound variables. It also satisfies the symmetric property. Any $\alpha$ conversion can be undone, and the conversion which undoes it proves the relation in the opposite direction. That is, a conversion from $X$ to $Y$ can be reversed to create a conversion from $Y$ to $X$ by changing the variables back. Finally, the $\alpha$ equivalence relation satisfies the transitive property. Take some terms $X, Y$ and $Z$ such that $X$ and $Y$ are alpha equivalent and $Y$ and $Z$ are alpha equivalent. This implies that there is a conversion from $X$ to $Y$ and a conversion from $Y$ to $Z$. We can convert $X$ into $Y$ and then into $Z$ using those two conversions, demonstrating that $X$ can be converted into $Z$. This satisfies the equivalence between $X$ and $Z$.\\
+
+$\alpha$ conversions are not particularly difficult to grasp or work with, so this is the only time we will really talk about them. It is useful, though, to know that the names we give to things do not affect how they behave.\\
+
+\subsection{Eta Conversion}
+\index{Eta Conversion|textbf}
+Our second equivalence relation is $\eta$ equivalence. Two terms $U$ and $V$ are $\eta$ equivalent if (without loss of generality) $U = \l x(Xx)$ and $V = X$. A conversion from $U$ to $V$ is called an $\eta$ reduction, and a conversion from $V$ to $U$ is called an $\eta$ expansion.\\
+\examplebox{$\eta$ expansion and reduction}{
+  \begin{center}
+    \begin{tabular}{c @{\hspace{.75in}} c}
+      $ X \rightarrow_\eta \l x(Xx)$ & $\l x(Xx) \rightarrow_\eta X$\\
+      $\eta$ expansion & $\eta$ reduction\\
+    \end{tabular}
+  \end{center}
+}
+
+For the sake of our equivalence relation, we say that a term is $\eta$ equivalent to itself.\\
+
+Like with $\alpha$ equivalence, we are not going to talk about $\eta$ conversion much, at least for the first half of the course. In the second half, it will come up again. This is because there really isn't much to $\eta$ conversion.
+
+\subsection{Beta Conversion}
+\index{Beta Conversion|textbf}
+We hinted earlier at the fact that we could create something analogous to functions in lambda calculus. The mechanism by which this happens is called $\beta$ conversion, and it allows substitution in terms. The equivalence relation for $\beta$ conversion is based on the following transformation:
+\begin{equation*}
+  (\l xX)Y \rightarrow_\beta [Y/x]X
+\end{equation*}
+In this transformation, we call $(\l xX)Y$ the \textbf{redex}. Curry called the $[Y/x]X$ term the \textbf{reducant} or \textbf{contractant}, but we will refer to them much, if at all.
+
+\textbf{Remark:} General $\beta$ conversion. We define as a $\beta$ redex as the term $(\l xX)Y$. Curry defined $[Y /x]X$ as the reductant or contractant. We will not use these terms. $\beta$ reduction can be represented as:
+\begin{equation*}
+  (\l xX)Y \rightarrow_\beta [Y / x]X
+\end{equation*}
+We allow ourselves to do this inside of bigger terms. We can $\beta$ reduce\index{Beta Reduction} a small term inside a bigger term to $\beta$ reduce the entire term.\\
+
+The equivalence relation $\beta$ conversion is based on the following: $(\l xX)Y =_\beta [Y / x]X$. This is analogous to the example of having a polynomial $p(x) = a_0 + a_1x + \ldots + a_nx^n$, and evaluating it at a point:
+\begin{equation*}
+  \hbox{Eval}(p(x),\pi) = a_0 + a_1\pi + a_2\pi^2 + \ldots + a_n\pi^n
+\end{equation*}

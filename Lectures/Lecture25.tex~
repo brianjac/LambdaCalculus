@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{mathrsfs}
+
+\input{../Polished/macros.tex}
+
+\lhead{March 20, 2015}
+\chead{21-366 Lambda Calculus Lecture 25}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Localization}
+There are two types of local rotations, one for beta and one for eta.
+
+\begin{enumerate}[(1)]
+  \item (Eta) Given an eta expansion $U \rightarrow_\eta \l u(Uu)$ followed by any sequence of rotations, then the rotaions can be done first on the term containing just $U$. Except for local clockwise rotations. Those are of the following form, for example:
+\end{enumerate}
+\begin{eqnarray*}
+  (\l u^{n,} (U^{\alpha,m+1,m+2}u^{n,\beta,m+1})^\square)^\diamond\\
+  ((U^{\alpha,m+1}u^{n,\beta,m+1,m})^{m,\square})^\diamond
+\end{eqnarray*}
+Local means a clockwise rotation of the particular application $U \rightarrow_\eta \l u(Uu)$.\\
+
+(2) (beta) Given beta reduction $(\l uU)V \rightarrow_\beta [V/u]U$. preceded by a seqnece of rotations. Then all the rotations can be done last, except local clockwise rotations of the redex.
+\begin{eqnarray*}
+  (\l u^{n,}U^{\alpha,n})^{n+1,n+2}V^{\delta,n+1}\\
+  \rightarrow (\l u^{n+1,n}U^{\alpha,n,n+1})^{n+1}V^{\delta,n+1}\\ % Result of a counterclockwise rotation
+  = [V^{\delta,m+1}/u^{n+1,n}]U^{\alpha,n,n+1}\\ % Further reduction
+  ...\\
+  \rightarrow (\l u^{n,}U^{\alpha,n})^{n+1}V^{\delta,n+1,n}\\ % Result of a clockwise rotation
+  = [V^{\delta,n+1,n}/u^{n,}]U^{\alpha,n}
+\end{eqnarray*}
+
+\subsection{Eta Postponement}
+If we have an eta expansion followed by a local clockwise rotation followed by a beta reduction, then these can be done in the ``opposite'' order: a local clockwise reduction followed by a beta reduction followed by a sequence of eta expansions.
+\begin{equation*}
+  (\l uU)V \rightarrow [V/u]U
+\end{equation*}
+Say that we have an eta expansion inside a term, $U \rightarrow \l uUu$, followed by some number of rotations local to the eta, followed by a beta reduction $(\l yY)z \rightarrow [Z/y]Y$.
+
+% \Delta_1 : U -> \l u Uu -->> down(marked local to the eta) to \Delta_2 (\l yY)z -> [Z/y]Y
+
+\textbf{Case 1:} $\Delta_1,\Delta_2$ are disjoint.\\
+\textbf{Case 2:} Overlap:
+2(a) $\Delta_1 \subseteq \Delta_2$ if $\Delta_1 = \Delta_2$ then we are clearly done in opposite order. If $\Delta_1 \subset \Delta_2$ and $\Delta_1 \subseteq Y$ $\Delta_1 \subseteq Z$ maybe many eta expansions in $[Z/y]Y$. $\Delta_1 = \l yY$ i.e. $UZ, \l u(Uu)Zm UZ$. Then simply keep $UZ$.\\
+
+2(b) $\Delta_2 \subseteq \Delta_1$. There are several subcases: either $\Delta_2 = Uu$ or $\Delta_2 \subseteq U$ (This is another easy case). Now if $\Delta_2 = Uu$, then we get
+\begin{eqnarray*}
+  \l yY\\
+  \l u((\l yY)u)\hbox{ clockwise rotations of $\l yY$ potentials onto $u$.}\\
+  \l u([u/y]Y)\hbox{ net effect is a counterclockwise rotation}
+\end{eqnarray*}
+
+\textbf{Proof of Termination:} % TODO: IMPORT PROOF OF TERMINATION FROM WEBSITE
+We need to show that:\\
+
+(1) Every alternating sequence of beta reduction and clockwise rotations terminates.\\
+
+(2) Every sequence of rotations terminates.\\
+
+(3) Every sequence of eta expansions and clockwise rotations terminates.
+\begin{eqnarray*}
+  U^{\alpha,n+2,n+1,\beta}\rightarrow(\l u^{n,}(U^{\alpha,n+2}u^{n,n+1})^{n+1,n})^{n+1,\beta}
+\end{eqnarray*}
+We assign for each subterm the sum of the values of the potential. The value of the term equals the multiset of those sums.\\
+
+Suppose we have an infinite sequence of betas, etas, and rotations. Take the first beta, and permute it to the beginning. You now have a number of local rotations, followed by a beta. We repeat this process until we have a sequence of local rotations, followed by a sequence of betas, followed by etas and rotations. This terminates, obviously. For the full, formal proof, see the appendix.
+
+\end{document}

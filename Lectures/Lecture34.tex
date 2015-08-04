@@ -1,0 +1,28 @@
+\chapter{Lecture 34}
+\lhead{April 10, 2015}
+\chead{21-366 Lambda Calculus Lecture 34}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Syntactic Functions}
+\subsection{Depth First Search of a Code}
+\begin{eqnarray*}
+  D\godnum{X}x &=& \langle P,x,R,S \rangle \hbox{if $X = \langle P,Q,R,S \rangle$ is $P = K_1^3$}\\
+  &=& \langle P, x, R, D S (Suc\ x) \rangle \hbox{if $P = K_3^3$}\\
+  &=& \langle P, x, (DR(succ\ x)), \rangle
+\end{eqnarray*}
+
+\subsection{Alpha Conversion}
+\begin{equation*}
+  AL\godnum{X}\godnum{Y} = \begin{tabular}{c}$K$\\$K_*$\end{tabular}
+\end{equation*}
+depending on whether $Y$ is an $\alpha$ conversion of $X$.
+
+\begin{equation*}
+  EQ\godnum{X}\godnum{Y} = \begin{tabular}{c}$K$\\$K_*$\end{tabular}
+\end{equation*}
+Depending on whether $X = Y$.\\
+
+Remark: There is no term $F$ such that $FMN = K$ iff $M =_\beta N$.\\
+
+Suppose that $F$ exists. Consider the following term: let $G = Y_T(\l x.\lnot (FKx))$ for G\"odel. This imples that $G = (\l x.\lnot (FKx))G =_\beta \lnot(FKG)$. But $G = \lnot(F(KG)) = K_*$...

@@ -1,0 +1,56 @@
+\chapter{Lecture 30}
+\lhead{April 1, 2015}
+\chead{21-366 Lambda Calculus Lecture 30}
+\rhead{Brian Jacobs}
+
+\section{More on Jacopini}
+For some $S$ a nonempty set of closed terms closed under $\beta$ equivalence, recall that $J(M,N) \Leftrightarrow$ there exist $M_1,\ldots,M_m$ which are closed, $P_1,\ldots P_m \in S$, $Q_1\ldots Q_m \in S$ such that
+\begin{eqnarray*}
+  M &=_\beta& M_1P_1Q_1\\
+  M_1P_1Q_1 &=_\beta& M_2Q_2P_2\\
+  \vdots\\
+  M_mP_mQ_m &=_\beta& N
+\end{eqnarray*}
+NOTICE THAT THE Ps AND Qs SWITCH PLACES FROM ONE SIDE TO ANOTHER. 
+Last time we introduced the Jacopini relation $J(M,N)$, which is a congruence which is closed under $=_\beta$. Today we show that it is the smallest.\\
+
+Suppose that we are given $\sim$, a congruence such that if $P,Q \in S$, then $P \sim Q$. We want to show that if $J(M,N)$, then $M \sim N$.\\
+
+Consider a case $M_iP_iQ_i = M_{i+1}P_{i+1}Q_{i+1}$. We have $J(M,M_1P_1Q_1)$ and $M \sim M_1P_1Q_1$. Why? $\sim$ is a congruence class, and the congruence classes are closed under $\beta$ conversion. Similarly, $J(M_iQ_iP_i,M_{i+1}Q_{i+1}P_{i+1})$ implies that $M_iQ_iP_i \sim M_{i+1}Q_{i+1}P_{i+1}$.\\
+
+So we have some $M_iP_iQ_i$, now $M_iP_i \sim M_iP_i$, because congruence relations are reflexive. Secondly, we have $Q_i,P_{i+1} \in S$ by definition of tableau. Therefore $Q_i \sim P_{i+1}$. Therefore $M_iP_iQ_i \sim M_iP_iP_{i+1}$.
+
+\subsection{Let us start over...}
+We want to show that $M_iP_iQ_i \sim M_iQ_iP_i =_\beta M_iP_iQ_i \sim M_iP_iP_i$ since $Q_iP_i \in S$. We know that
+\begin{equation*}
+  \l x(M_i x Q_i)P_i\ldots
+\end{equation*}
+
+\subsection{Let us start over...}
+We want to show that $M_iP_iQ_i \sim M_iQ_iP_i =_\beta M_iP_iQ_i \sim M_iP_iP_i$. We know that
+\begin{equation*}
+  M_iP_iQ_i \sim M_iP_iP_i =_\beta (\l x M_i x P_i) \sim (\l x M_i x P_i)P_iQ_i \in S
+\end{equation*}
+We are trying to prove that every step in the tableau equivalences remain in $S$.\\
+
+We have a problem. If $S = \{K,K_*\}$. If we have $K \sim K_* \rightarrow_\beta M \sim N \Rightarrow KMN \sim K_*MN \rightarrow_\beta M \sim N$.
+
+\section{B\"ohm's Theorem}
+We will prove a bare bones version: If $M$ and $N$ are closed terms in normal form and they do not $\eta$ convert, then there exists terms $P_1\ldots P_n$ such that $MP_1\ldots P_m =_\beta K$ and $NP_1\ldots P_m =_\beta K_*$.\\
+
+Remark: This is true for terms with finite B\"ohm trees.\\
+
+\subsection{Proof}
+The terms $M$ and $N$ look like:
+\begin{equation*}
+  \l x_1\ldots x_n.x_i
+\end{equation*}
+where $x_i$ has subterms $X_1\ldots X_m$. $n$ and $m$ can both be zero. There are three different ways in which a node in $M$ can differ from one in $N$. Different length lambda prefix, different length bound variables, ???.\\
+
+Eta Expansion Example: $\l xy.xX \rightarrow_\eta \l xy.(\l z(xX)z)$ We could alternately reduce $\l xy.xX \rightarrow_\eta \l x \l z (\l y.xX)z$.\\
+
+Notice that when we eta convert, the length of the lambda prefix and the number of bound variables both change. But they both change in such a way that $N - M$ is invariant.\\
+
+We assume that $M,N$ are $M \not=_\eta N$ normal form with the same tree. Find the first place at which the B\"ohm trees are different. For example, suppose that at the root of the tree we have $M = \l x_1\ldots x_n . x_iX_1\ldots X_n$ and $N = \l y_1\ldots y_k . y_jY_1\ldots Y_k$. There are two cases.\\
+
+Case 1: $n \not= k$, $n > k$ For each $P_1\ldots P_n$, $MP_1\ldots P_n = P_iX_1^+\ldots X_n^+$ and $NP_1\ldots P_n = P_jY_1^+\ldots Y_m^+P_{k+1}\ldots P_n$. How do we ensure that $P_i = P_j$? We set for all $r = 1,\ldots,n$ $P_r = \l z_1\ldots z_{n}I$. So $MP_1\ldots P_n =_\beta I$

@@ -1,0 +1,88 @@
+\chapter{Lecture 3}
+\lhead{January 16, 2015}
+\chead{21-366 Lambda Calculus Lecture 3}
+
+\section{A Survey of Terms}
+We have the variables $x_0, x_1, x_2, \ldots$. Note that $i$ may be $> n$. $n$ can be zero.
+\begin{enumerate}[(1)]
+  \setcounter{enumi}{0}
+  \item $x$
+  \item $(\l x_1 \ldots x_n . x_i)$
+  \item $(\l x_1 \ldots x_n.((\l xX_0)X_1) \ldots )X_m))$
+  \item $(\underbrace{\l x_1 \ldots x_n}_{\hbox{Lambda prefix}} . \underbrace{(( \ldots (\underbrace{x_i}_{\hbox{head}} X_i) \ldots )X_m )}_{\hbox{matrix}}$
+\end{enumerate}
+In case 2., we have a sequence of lambdas, then an application:
+\begin{center}
+  \begin{tikzpicture}
+    \draw (0,0) -- (0,2);
+    \draw (0,2) -- (.5, 2.5);
+    \draw (0,2) -- (-.5, 2.5);
+    \draw (-0.5, 2.5) -- (-1, 3);
+    \draw (-0.5, 2.5) -- (0, 3);
+
+    \draw (1,1) node {Lambdas};
+    \draw (2,2.5) node {Applications};
+  \end{tikzpicture}
+\end{center}
+
+\begin{enumerate}[(1*)]
+  \setcounter{enumi}{0}
+  \item $= (0)$
+  \item $= (1)$
+  \item $= (\l x_1 \ldots x_n . (\l x(X_0)X_1 \ldots X_m)$
+  \item $= (\l x_1 \ldots x_n . x_LX_1 \ldots X_n)$
+\end{enumerate}
+
+\textbf{Fact:} Given a term written with association to the left, we can uniquely restore parens. More precisely, there are not 2 terms $X, Y$ whose deletion of parens by association to the left are equal.\\
+
+Let $X, Y$ be terms. Let $X^*, Y^*$ be the result of deleting parens by association to the left. Let $X \neq Y$.\\
+
+\textbf{Claim:} $X^* \neq Y^*$\\
+
+\noindent\textbf{Proof:} by induction on $X$.
+
+Base case: $X$ is a variable. It has no parens, of the form $x_{i_1},x_{i_2}\ldots x_{i_k}$.
+\begin{eqnarray*}
+  ((xy)z)* &=& xyz\\
+  (x(yz))* &=& x(yz)\\
+\end{eqnarray*}
+
+Induction Step: In case (1), we have two parens. This can only happen when we have
+\begin{equation*}
+  (\l x_1 \ldots x_n.X_{i_1}\ldots X_{i_k})
+\end{equation*}
+$X^* = Y^*$ in cases where $(0)^*, (1)^* \Rightarrow X = Y$.\\
+
+Consider the proper pairing of parens. Case (2) applies to $X$ implies (2) applies to $Y$ and case (3) applies to $X$ implies (3) applies to $Y$.
+\begin{equation*}
+  (\l x_1 \ldots x_n (\l xX_0))(\ \ \ )(\ \ \ ))
+\end{equation*}
+The parens in argument position must be reconstructable by the induction hypothesis. FIGURE OUT AND FIX THIS PROOF.
+
+\section{Substitution of a Term for a Variable}
+Example: we are attempting to substitute the right term into the left term.
+\begin{equation*}
+  (\l x . yx)\hspace{1in}(zx)
+\end{equation*}
+This gives us a namespace conflict, so we must change the $x$ in the lambda:
+\begin{eqnarray*}
+  (\l u . yu)\\
+  (\l u . (zx)u)
+\end{eqnarray*}
+
+\subsection{Clash Graphs}
+\index{Clash Graph|textbf}
+We have some abstract term. From the root, there is only one path to any given leaf.
+\begin{center}
+  \begin{tikzpicture}
+    \draw (0,0) -- (0,-1) node[anchor=west] {$\l x\ (v_1)$};
+    \draw (0,-1) -- (0,-2) node[anchor=north] {$x$};
+    \draw (-1.5,-2) -- (0,0) -- (1.5,-2);
+
+    \draw (0,-1.5) node[anchor=west] {$\l y\ (v_2)$};
+
+    % Draw an arrow from x to \l x.
+  \end{tikzpicture}
+\end{center}
+
+We define a \textbf{clash graph} which has verticies that are the \l{} abstraction nodes of the term. $v_1$ is adjacent to $v_2$ provided that $v_2$ lies on the path from $v_1$ to a leaf which it binds, or vice versa.

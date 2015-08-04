@@ -1,0 +1,15 @@
+\chapter{Exercise 2}
+\lhead{\today}
+\chead{21-366 Lambda Calculus Exercise 2}
+
+\section{Problem Statement}
+A elementary alpha conversion is an alpha conversion which changes only the variable at one occurrence of lambda, and, of course, at all the occurrences it binds. So, for example, the alpha conversion from $\l xy.(xy)$ to $\l yx. (yx)$ is not elementary but it can achieved by the sequence $\l xy.(xy)$, $\l xz.(xz)$, $\l yz.(yz)$, $\l yx.(yx)$ of elementary alpha conversions. Show that every alpha conversion from $X$ to $Y$ can be achieved by a sequence of elementary alpha conversions which uses at most one variable neither in $X$ nor in $Y$.
+
+\section{Proof}
+We first consider the simple case when $X$ and $Y$ each contain a single variable, which is different. In this case, it is clear that a single elementary alpha conversion, changing that one differing variable, converts $X$ to $Y$ or vise versa.\\
+
+Now consider $X$ and $Y$ such that they differ by $n$ variables. We can perform a sequence of elementary alpha conversions on $X$ to create a new term $X'$ which differs from $Y$ by only $n - 1$ variables. There are two possible subcases. Let the variable we are converting be $x \in X$ and $y \in Y$. If $y \not\in X$, then we can simply make an elementary alpha conversion of $y$ for $x$.\\
+
+If $y \in X$, then we first need to protect the existing $y$s before we substitute. We can perform an elementary alpha conversion to exchange $y$ for some variable $z$ which does not occur in $X$ or $Y$. Then we are in our first case again. We can then replace our $z$'s with the appropriate variable from $Y$ without replacement, since we know that $z$ does not appear in $Y$. After this substitution, we can use $z$ again as our ``extra'' variable.\\
+
+Inductively, we can see that this allows us to perform an alpha conversion between $X$ and $Y$. Additionally, by our substitution strategy, we can see that we need only one extra variable which does not exist in $X$ or $Y$ to perform our alpha conversion. \qqed

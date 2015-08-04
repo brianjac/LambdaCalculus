@@ -1,0 +1,105 @@
+\chapter{Lecture 12}
+\def\over#1#2{#1}
+\def\LeftRightarrow{\Leftarrow\Rightarrow}
+
+\lhead{February 9, 2015}
+\chead{21-366 Lambda Calculus Lecture 12}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Untitled on Board}
+\begin{equation*}
+  ((\l x X)Y) \rightarrow_\beta [Y/x]X
+\end{equation*}
+Step 1:
+\begin{equation*}
+  U_1 \rightarrow_\beta \Rightarrow U_1V \rightarrow_\beta U_2V \hbox{ and } VU_1 \rightarrow_\beta VU_2
+\end{equation*}
+Also,
+\begin{equation*}
+  \l uU_1 \rightarrow_\beta \l uU_2
+\end{equation*}
+Many steps:
+\begin{eqnarray*}
+  U \rightarrow_\beta V \Rightarrow U \twoheadrightarrow_\beta V,\ U = V \Rightarrow U \rightarrow_\beta V.\\
+  U_1 \twoheadrightarrow_\beta U_2 \hbox{ and } V_1 \twoheadrightarrow_\beta V_2 \Rightarrow U_1V_1 \twoheadrightarrow_\beta U_2V_2\\
+\end{eqnarray*}
+Additionally,
+\begin{eqnarray*}
+  U \twoheadrightarrow_\beta V \Rightarrow \l uU \twoheadrightarrow_\beta \l uV\\
+\end{eqnarray*}
+
+\subsection{Reduction Sequence}
+\begin{equation*}
+  U = U_0 \over{\Delta_0}{\rightarrow_\beta} U_1 \rightarrow_\beta \ldots \over{\Delta_{n-1}}{\rightarrow_\beta} U_n = V
+\end{equation*}
+$U =_\beta V$ is the smallest equivalence relation $\subseteq \twoheadrightarrow_\beta$. We say that $U =_\beta V \LeftRightarrow$ there exists a sequence of terms $U_0, U_1,\ldots U_{2n}$ such that
+% Todo: make the valleys.
+\begin{equation*}
+  U_0 \twoheadrightarrow_\beta U_1 \twoheadleftarrow_\beta U_2 \twoheadrightarrow_\beta \ldots \twoheadleftarrow_\beta U_{2n} = V
+\end{equation*}
+
+\section{Church-Rosser Theorem}
+The Church-Rosser theorem states that if there exists a term $U =_\beta V$ then there exists a $W$ such that $U \twoheadrightarrow_\beta W \twoheadleftarrow_\beta V$.\\
+
+\subsection{Strong Diamond Property}
+\textbf{Proof:} The proof establishes something called the ``diamond property.'' The idea is that if we can take a ``hill'' and turn it into a ``valley,'' then we can ``pave'' a sequence of beta reductions into a single valley. Formally, the diamond property states that: if
+\begin{equation*}
+  U \twoheadleftarrow_\beta X \twoheadrightarrow_\beta V
+\end{equation*}
+ 
+\subsection{Notes on Diagrams}
+In a diagram, you see both solid lines and dotted lines. The solid lines are read ``if this line exists,'' and the dotted lines are read ``then this line exists.''
+\begin{center}
+  \begin{tikzpicture}
+    % (0,0) is X,
+    % (-1,-1) is U
+    % (1,-1) is V
+    % (0,2) is W
+    % Bottom two are dotted
+    \draw (0,0) -- (-1,-1);
+    \draw (-1,-1) -- (0,-2);
+    \draw (0,0) -- (1,-1);
+    \draw (1,-1) -- (0,-2);
+  \end{tikzpicture}
+\end{center}
+
+We can attempt to prove the strong diamond property (which is not true.) Imagine that we have $U \over{\Delta_1}{\leftarrow_\beta} X \over{\Delta_2}{\rightarrow_\beta} V$. $\Delta_1$ and $\Delta_2$ are disjoint. Notice that $\Delta_2$ has a unique residual in $U$, and $\Delta_1$ has a unique residual in $V$. We can then do:
+\begin{eqnarray*}
+  U \over{\Delta_1}{\leftarrow_\beta} &D& \over{\Delta_2}{\rightarrow_\beta} V\\
+  U \over{\Delta_2}{\rightarrow_\beta} &D'& \over{\Delta_1}{\leftarrow_\beta} V\\
+\end{eqnarray*}
+
+Notice that
+\begin{equation*}
+  [Y_1/x]([Y_2/z]X_2) = [Y_1/x, [Y_1/x]Y_2/z]X
+\end{equation*}
+
+Our final case is the degenerate case $\Delta_2$ is in $Y_1$. We then have
+\begin{center}
+  \begin{tikzpicture}
+    \draw (0,0) -- (1,1); % Triangle where U <<- X ->> V with a dotted line between U and V.
+  \end{tikzpicture}
+\end{center}
+So, strong diamond property does not work, but this is okay for the purposes of proving Church-Rosser. At this point in the proof, many people part ways. Church and Rosser have a proof, as do Kleene and J.J. Levy/Hindley.\\
+
+Church and Rosser show that all of the redexes of $\Delta_2$ are disjoint. So eventually we get to our original, nondegenerate case. We will take a different route.\\
+
+\subsection{Weak Diamond Property}
+The weak diamond property replaces the single beta reductions with beta reduction sequences:
+\begin{center}
+  \begin{tikzpicture}
+    \draw (0,0) -- (-1,-1);
+    \draw (-1,-1) -- (0,-2); % dotted and two headed
+    \draw (0,0) -- (1,-1);
+    \draw (1,-1) -- (0,-2); % dotted and two headed
+  \end{tikzpicture}
+\end{center}
+Unfortunately, the weak diamond property is not enough on its own. We cannot prove Church-Rosser using weak-diamond. Explaining why uses surjective pairings and is beyond the scope of this course.\\
+
+\textbf{Definition:} $X$ is said to be \textit{normalizable} if there is a normal form $N$ such that $X \twoheadrightarrow_\beta N$. $X$ is said to be \textit{strong normalizable} if every reduction sequence of $X$ ultimately ends in a normal form. We notate that $X$ is strongly normalizable as $X \in \hbox{SN}$. We can think of strongly normalizable terms as having a tree of reductions with no infinte path through the tree.
+
+\subsection{A Brief Combinatorial Fact: K\"onig's Lemma}
+The German mathematician K\"onig had a theorem, called K\"onig's Lemma: a finitely branching tree with no infinite path is finite. The contrapositive is that if we have an infinite tree, then we have an infinite path.\\
+
+\textbf{Proof:} Suppose that $T$ is an infinite, finitely branching tree. We find our infinite path in the following way. Consider all the subtrees of $T$: $T_1,\ldots T_n$. By the pidgeonhole principle, at least one of these subtrees must be infinite. Take the edge to that subtree. This finds us an infinite path. \qqed

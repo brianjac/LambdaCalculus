@@ -1,0 +1,64 @@
+\chapter{Lecture 32}
+\lhead{April 6, 2015}
+\chead{21-366 Lambda Calculus Lecture 32}
+\rhead{Brian Jacobs}
+
+\section{G\"odel Numbering (without numbers)}
+The idea is to assign to each lambda term $M$ at least one object, a G\"odel ``number'' (or code) which is another term $\godnum{M}$ (which is not necessarily unique) such that there exists a lambda term $E$, the evaluator, where
+\begin{equation*}
+  E\godnum{M} =_\beta M
+\end{equation*}
+
+Note that this gives us a fixed point theorem (oftentimes called the Kleene fixed point theorem). For each $M$ there exists an $N$ such that $N = M \godnum{N}$.\\
+
+Corollary: There exists $N$ such that $MN =_\beta N$.\\
+
+Since we can apply Kleene's fixed point to the term $\l x.M(Ex)$, we get an $N$ such that
+\begin{equation*}
+  MN =_\beta M(E\godnum{N}) =_\beta (\l x.M(Ex))\godnum{N} = N
+\end{equation*}
+
+\subsection{Proof of Kleene's Fixed Point}
+Given $M$, consider the term
+\begin{equation*}
+  P = \l x.M(Exx)
+\end{equation*}
+Then
+\begin{eqnarray*}
+  P\godnum{P} =_\beta (\l x.M(Exx))\godnum{P} =_\beta M(E\godnum{P}\godnum{P}) = M(P\godnum{P})
+\end{eqnarray*}
+
+\subsection{Codes}
+A code is a quadruple $\langle M,N,P,Q \rangle = \l a.aMNPQ$. There are three possible cases. Variable, application, or abstraction. $M$ tells us which we are in. It is one of the following:
+\begin{eqnarray*}
+  M = \begin{tabular}{c l}
+    $\l abc.a$ & variable\\
+    $\l abc.b$ & application\\
+    $\l abc.c$ & abstraction\\
+  \end{tabular}
+\end{eqnarray*}
+$N$ is a comment. We do not care what it is at present. $P$ is a placeholder which may be used later.\\
+
+$Q$ is a church numeral $\uline{n}$ which tells us which variable it is. So, for example,
+\begin{eqnarray*}
+  \langle \l abc.a,N,P,\uline{n} \rangle &=& \godnum{X_n}\\
+  \langle \l abc.b,N,\godnum{X},\godnum{Y} \rangle &=& \godnum{(X,Y)}\\
+  \langle \l abc.c,N,\uline{n},\godnum{X} \rangle = \godnum{\l x_n.X}\\
+\end{eqnarray*}
+This defines the set of codes of terms.\\
+
+\textbf{Remark 1:} Many functions on codes of terms will be defined by recursion. For example, we define the depth function.\\
+
+Recall: there is a term MAX such that MAX$\ \uline{n}\ \uline{m} = \uline{\hbox{max}(n,m)}$. We define depth$\godnum{M} =$ a code of $M$ such that the comments are the depth of the corresponding subterm. So
+\begin{equation*}
+  \hbox{depth}(M) = \begin{tabular}{c l}
+    $1$ & if $M$ is a variable\\
+    $1 + \hbox{max}(\hbox{depth} X, \hbox{depth} Y)$ & if $M = XY$\\
+    $1 + \hbox{depth}(X)$ & $M = \l x.X$
+  \end{tabular}
+\end{equation*}
+
+\subsection{A Pidgeon Lambda Calculus Language}
+We write $\godnum{M} = \langle P_0, P_1, P_2, P_3 \rangle$. If $P_0 = \l abc.a$, then $D\godnum{M} = \langle P_0, 1, P_2, P_3 \rangle$. If $P_0 = \l abc.b$, then $\langle P_0, \uline{+}\ \uline{1}\ \hbox{MAX} (D\godnum{P_2}(\l xyzw.y)) (D\godnum{P_3}(\l xyzw.y)), DP_2, DP_3 \rangle$. IF $P_0 = \l abc.c$, then $D\godnum{M} = \langle P_0, (DP_2(\l abced.b) + 1), P_2,P_3 \rangle$.\\
+
+To make this a lambda term, we need to do two things. Replace the conditionals by projections, and then solve for $D$ using a fixed point combinator.

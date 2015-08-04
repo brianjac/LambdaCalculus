@@ -1,0 +1,253 @@
+\chapter{Lecture 7}
+\lhead{January 28, 2015}
+\chead{21-366 Lambda Calculus Lecture 7}
+
+\section{Operations on Data Structures}
+Now that we have defined some data structures, the next natural step is to perform calculations on them. We establish a number of integer operations, and describe how to use booleans to implement branching. We complete a simple programming environment by describing a strategy for implementing recursion.
+
+\subsection{Integer Addition and Subtraction}
+\index{Integer!Integer Addition|textbf}
+\index{Integer!Integer Subtraction|textbf}
+What is the addition of two integers? Since we represent our integers in the form
+\begin{equation*}
+  \l xy.\underbrace{xx\ldots x}_{n}y
+\end{equation*}
+it stands to reason that we want a function $\uline{+}$ such that
+\begin{equation*}
+  \uline{+}(\l xy.\underbrace{xx\ldots x}_{n}y)(\l xy.\underbrace{xx\ldots x}_{m}y) \twoheadrightarrow_\beta (\l xy.\underbrace{xx\ldots x}_{n + m}y)
+\end{equation*}
+
+So our function $\uline{+}$ can simply take one number and insert it into the second. So we can define $\uline{+}$ as:
+\begin{equation*}
+  \uline{+} := \l uv.\l xy.(ux(vxy))
+\end{equation*}
+\examplebox{Example: Using $\uline{+}$}{
+  \begin{eqnarray*}
+    \uline{+}\uline{3}\uline{2} &=_\beta& (\l uv.(\l xy.(ux(vxy))))()()
+  \end{eqnarray*}
+}
+
+We can see that addition will never result in a number which is not in our set of (nonnegative) integers. A problem arises, however, when we attempt to define subtraction. Defining subtraction as the inverse of addition is unsatisfactory, as many expressions involving subtraction would just not have solutions. To keep subtraction closed on the set of nonnegative integers, we define \textbf{monus subtraction}\index{Monus Subtraction} as
+\begin{equation*}
+  n \monus m = 0 \hbox{ if } m \geq n \hbox{ else } n - m
+\end{equation*}
+Monus subtraction is not exactly the integer subtraction that we are used to, but it solves the problem of $A - B$ being undefined whenver $B > A$. In the next lecture, we will explain out how to perform monus subtraction using lambda terms.
+
+Recall our definition of the monus subtraction function:
+\begin{equation*}
+  n \monus m = \left\{\begin{tabular}{cl}0 & if $m \geq n$\\ $n - m$ & if $m < n$\end{tabular}\right.
+\end{equation*}
+We can redefine this function in terms of itself, recursively:
+\begin{equation*}
+  n \monus m = \left\{
+  \begin{tabular}{cl}
+    $n \monus 0 = n$\\
+    $n \monus (m + 1) = $pred$(n \monus m)$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+
+
+\subsection{Integer Multiplication}
+\index{Integer!Integer Multiplication|textbf}
+In the last lecture, we introduced methods for representing nonnegative integers, and for adding such integers. A natural next step is to determine a method for computing multiplication. By this point, it should be relatively clear how to proceed.\\
+
+We can define multiplication\index{Multiplication} as
+\begin{equation*}
+  \uline{\cdot} := \l uv u(\uline{+}v)\uline{0}
+\end{equation*}
+We have an example:
+\begin{equation*}
+  \uline{\cdot}\ \uline{n}\ \uline{m} \twoheadrightarrow_{\beta} \uline{n}(\uline{+}\ \uline{m}) \twoheadrightarrow_{\beta} \underbrace{\uline{+}\ \uline{m} (\uline{+}\ \uline{m} ( \ldots (\uline{+}}_{n}\ \uline{m}\ \uline{0}) \ldots ) \twoheadrightarrow_{\beta} \uline{n \cdot m}
+\end{equation*}
+There exists a simpler, alterantive definition:
+\begin{equation*}
+  \uline{\otimes} := \l uv . u(vx)
+\end{equation*}
+
+Again we compute an example for clarity:
+\begin{equation*}
+  \uline{\otimes} \uline{n}\ \uline{m} \twoheadrightarrow_{\beta} \l x (\ \uline{n}\ (\uline{m}\ x)) \twoheadrightarrow_{\beta} (\l x \l w \underbrace{(\ \uline{m}\ x(\ldots (\ \uline{m}}_{n}\ x w))))
+\end{equation*}
+This gives us $n$ nested redexes of the form $\l yx(\ldots(xy)\ldots)(\ \uline{\ \ \ }\ )$
+
+\subsection{The Conditional}
+\index{Conditional}
+We now return to our definition of the boolean. Recall that we want to use boolean values to determine which branch to take in a conditional statement. In general, we want $\supset KXY =_\beta X$ and $\supset K_*XY =_\beta Y$ for some definition of $\supset$, which we call the conditional. You might notice now that we have done something sneaky. Let us reduce the expression $KXY$.\\
+
+\examplebox{Reduction of $KXY$}{
+  \begin{equation*}
+    KXY =_\beta (\l xy.x)(XY) \rightarrow_\beta X
+  \end{equation*}
+}
+
+Huh. It turns out that we can simply use the identity term, $I$, as our conditional. Why do we need the conditional operator at all, then? The answer is that there is more than one way that we can represent $K$ and $K_*$, and not every way that we choose reduces as nicely. Much later, we will find it useful to retain the same structure for terms which we expect to do similar things, so that we can more easily prove that they actually are related.
+
+\subsection{Basic Boolean Operators}
+\index{Boolean Operator}
+Now that we can branch on individual booleans, we can consider cases where we want to condition on some logical combination of multiple boolean values. To do this, we can implement the basic building blocks of Boolean algebra.\\
+\margnot{Boolean Algebra}{ Boolean Algebra was invented by George Boole\index{Boole, George}, a philosopher and logician, for use in determing the truth or falsity of statements.}
+
+There are three main operators which we should implement. The AND operator, the OR operator, and the NOT operator. In computer engineering, these operators are called \textbf{logic gates}\index{Logic Gate}. In logic, they are called \textbf{logical connectives}\index{Logical Connective}. We can think of them as functions of the form $f: B \times B \rightarrow B$, where $B$ is the set $\{1,0\}$ of boolean values.\\
+
+We can easily define the functions in terms of \textbf{truth tables}\index{Truth Table}, which are simply a way of enumerating all possible inputs to a boolean function, and listing their output. Conventionally, we notate the inputs to the function with capital letters starting with 'A', and notate the output with the letter 'S'. True is $1$ and $0$ is false. The truth tables for our three operators are as follows.
+
+\begin{center}
+\begin{tabular}{c c | c}
+  \multicolumn{3}{c}{AND}\\
+  A & B & S\\
+  \hline
+  \rowcolor{txtbkpaleblue}
+  0 & 0 & 0\\
+  0 & 1 & 0\\
+  \rowcolor{txtbkpaleblue}
+  1 & 0 & 0\\
+  1 & 1 & 1\\
+\end{tabular}
+\hspace{1in}
+\begin{tabular}{c c | c}
+  \multicolumn{3}{c}{OR}\\
+  A & B & S\\
+  \hline
+  \rowcolor{txtbkpaleblue}
+  0 & 0 & 0\\
+  0 & 1 & 1\\
+  \rowcolor{txtbkpaleblue}
+  1 & 0 & 1\\
+  1 & 1 & 1\\
+\end{tabular}
+\hspace{1in}
+\begin{tabular}{c | c}
+  \multicolumn{2}{c}{NOT}\\
+  A & S\\
+  \hline
+  \rowcolor{txtbkpaleblue}
+  0 & 1\\
+  1 & 0\\
+  \multicolumn{2}{c}{}\\
+  \multicolumn{2}{c}{}\\
+\end{tabular}
+\end{center}
+Note that these definitions are essentially similar to the English language meanings of the words and, or, and not. Take the statement: ``we need to buy eggs and we need to buy milk.'' If we do not buy both eggs and milk, we have failed in our task.\\
+
+Our simplest operator is NOT. Whenever the input to NOT is true, the output to NOT is false, and vice versa. This can be implemented in lambda calculus as:
+\begin{equation*}
+  \l b.\supset b K_* K
+\end{equation*}
+We can demonstrate the correctness of this expression by exhaustive testing. As an aside, this is a good, simple example of the technique presented in the section about finite sets for constructing functions from a lookup table.
+\examplebox{Proof of Correctness for NOT}{
+  \begin{eqnarray*}
+    \hbox{NOT}K &=_\beta& (\l b.\supset bK_*K)K \rightarrow_\beta \supset K K_* K \rightarrow_\beta (\l xy.x)(K_*K) \rightarrow_\beta K_*\\
+    \hbox{NOT}K_* &=_\beta& (\l b.\supset bK_*K) \rightarrow_\beta \supset K_* K_* K \rightarrow_\beta (\l xy.y)(K_*K) \rightarrow_\beta K\\
+  \end{eqnarray*}
+}
+We now present the implementations and correctness proofs for AND and OR. Understanding these types of reductions is good practice. Producing these correctness proofs on your own is a good, if quick exercise. These reductions are more explict than strictly necessary, to allow readers who have fallen behind a chance to catch up.
+\examplebox{AND and OR}{
+  \begin{eqnarray*}
+    \hbox{AND}b_1b_2 &:=& \l b_1b_2.\supset b_1b_2 K_*\\
+    \hbox{OR}b_1b_2 &:=& \l b_1b_2.b_1 K b_2
+  \end{eqnarray*}
+}
+\examplebox{Proof of Correctness for AND and OR}{
+  \begin{eqnarray*}
+    \hbox{AND}KK     &=_\beta& (\l b_1b_2.\supset b_1b_2 K_*)KK \rightarrow_\beta \supset KKK_* \rightarrow_\beta (\l xy.x)KK_* \rightarrow_\beta K\\
+    \hbox{AND}KK_*   &=_\beta& (\l b_1b_2.\supset b_1b_2 K_*)KK_* \rightarrow_\beta \supset KK_*K_* \rightarrow_\beta (\l xy.x)K_*K_* \rightarrow_\beta K_*\\
+    \hbox{AND}K_*K   &=_\beta& (\l b_1b_2.\supset b_1b_2 K_*)K_*K \rightarrow_\beta \supset K_*KK_* \rightarrow_\beta (\l xy.y)KK_* \rightarrow_\beta K_*\\
+    \hbox{AND}K_*K_* &=_\beta& (\l b_1b_2.\supset b_1b_2 K_*)K_*K_* \rightarrow_\beta \supset K_*K_*K_* \rightarrow_\beta (\l xy.y)K_*K_* \rightarrow_\beta K_*
+  \end{eqnarray*}
+  \vspace{.2in}
+  \begin{eqnarray*}
+    \hbox{OR}KK     &=_\beta& (\l b_1b_2.\supset b_1 K b_2)KK \rightarrow_\beta \supset KKK \rightarrow_\beta (\l xy.x)KK \rightarrow_\beta K\\
+    \hbox{OR}KK_*   &=_\beta& (\l b_1b_2.\supset b_1 K b_2)KK_* \rightarrow_\beta \supset KKK_* \rightarrow_\beta (\l xy.x)KK_* \rightarrow_\beta K\\
+    \hbox{OR}K_*K   &=_\beta& (\l b_1b_2.\supset b_1 K b_2)K_*K \rightarrow_\beta \supset K_*KK \rightarrow_\beta (\l xy.y)KK \rightarrow_\beta K\\
+    \hbox{OR}K_*K_* &=_\beta& (\l b_1b_2.\supset b_1 K b_2)K_*K_* \rightarrow_\beta \supset K_*KK_* \rightarrow_\beta (\l xy.y)KK_* \rightarrow_\beta K_*
+  \end{eqnarray*}
+}
+
+\section{Recursion}
+\index{Recursion|textbf}
+Remark: The $1^{\hbox{\footnotesize st}}$ definition of $\uline{\cdot}$ gives us an idea for doing recursion. Given any term $F$ we can iterate $F$ $T$ times as follows:
+\begin{eqnarray*}
+  F^+ := \l x.xFT\\
+  \hbox{then}\\
+  F^+\uline{n} \twoheadrightarrow_{\beta} (\underbrace{F(\ldots(F}_{n}T))\ldots)
+\end{eqnarray*}
+We can do better. We can define a more advanced form of recursion on integers:
+\begin{equation*}
+  F^+\uline{n + 1}T =_\beta F(F^+\uline{n})T
+\end{equation*}
+Note that
+\begin{equation*}
+  F^+\uline{0}T =_\beta T
+\end{equation*}
+To make this work, we need an auxiliary function $\mathbb{N} \rightarrow$Booleans. We define the sign function\index{Sign Function} and its converse as
+\begin{equation*}
+  sg(n) = \left\{
+  \begin{tabular}{cl}
+    TRUE & $n \neq 0$\\
+    FALSE & $n = 0$\\
+  \end{tabular}
+  \right.
+  \hspace{1in}
+  \uline{\overline{sg}}(n) = \left\{
+  \begin{tabular}{cl}
+    FALSE& $n \neq 0$\\
+    TRUE & $n = 0$\\
+  \end{tabular}
+  \right.
+\end{equation*}
+Now we define these functions as lambda expressions:
+\begin{eqnarray*}
+  \uline{sg} &:=& \l u . u(KK)K_*\\
+  \uline{\overline{sg}} &:=& \l u . u(K_*K_*)K\\
+\end{eqnarray*}
+We observe that this as well works:
+\begin{equation*}
+  \uline{sg}\ \uline{n} \rightarrow_\beta \uline{n}\ (KK)K_* \twoheadrightarrow_{\beta} \underbrace{(KK)(\ldots}_{n}(KK)K_*)\ldots) \twoheadrightarrow_\beta K
+\end{equation*}
+
+\subsection{Computing Predecessor}
+\index{Predecessor Function}
+Start with two stacks of $1$'s: $0,0$. Assume that at stage $t$ we have $t,$pred$(t)$. At stage $t + 1$, we have $t + 1, t$. After $n$ iterations, you have $n,$pred$(n)$.\\
+
+Here is another method. Represent pred by \uline{pred}. We need a two stack data structure:
+\begin{equation*}
+  \l a . a\ \uline{n}\ \uline{m}
+\end{equation*}
+We initialize this structure as $\l a.0\ 0$. We then want to apply some sort of operation to this data structure $u$ times:
+\begin{equation*}
+  \l u . u\ \boxed{\hphantom{Oh, god}}\ (\l a . a\ \uline{0}\ \uline{0}\ )
+\end{equation*}
+But what function are we applying in the box?
+\begin{equation*}
+  \boxed{\hphantom{Oh, god}} := \l z . (\l b . b (\uline{s}\ (zk))(zk))k_*
+\end{equation*}
+Now we apply it:
+\begin{equation*}
+  \uline{\hbox{pred}}\ \uline{n}\ \rightarrow_\beta \uline{n}\ (\l z (\l b . b(\uline{s}\ (zk))(zk)))(\l a . a\ \uline{0}\ \uline{0})
+\end{equation*}
+Notice now that we can simulate a $2$ register machine.\\
+
+\textbf{Remark:} $\uline{\otimes} : \l uv\l x . u(vx) = B$. The $B$ stands for ``beweis,'' which is German for ``proof.'' Now let us take $BFG \twoheadrightarrow_\beta \l x\ (F(Gx))$, or $(BFG)x \twoheadrightarrow_\beta F(Gx)$. Notice that $B$ is a combinator.
+
+\section{Combinators}
+\index{Combinator}
+$S$ stands for ``substitution.'' $C$ stands for ``commute.''
+\begin{eqnarray*}
+  I &:=& \l x . x\\
+  K &:=& \l xy . x\\
+  K^* &:=& \l xy . y\\
+  S &:=& \l xyz . xy(yz)\\
+  B &:=& \l xyz . x(yz)\\
+  C &:=& \l xyz . xzy\\
+\end{eqnarray*}
+But now we want a combinator which does this:
+\begin{equation*}
+  \l x \l y_1 \ldots y_n . x y_{\pi(1)} \ldots y_{\pi(n)}
+\end{equation*}
+where $\pi$ is a permutation on $\{1,\ldots,n\}$.\\
+
+We define one last combinator which, given a function $f: \mathbb{N}^2 \rightarrow \mathbb{N}$ gives a function $f^W(n) = f(n,n)$. This function diagonalizes across the naturals.
+\begin{equation*}
+  W := \l x \l y \ xyy
+\end{equation*}

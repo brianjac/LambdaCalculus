@@ -1,0 +1,47 @@
+\chapter{Lecture 14}
+\lhead{February 13, 2015}
+\chead{21-366 Lambda Calculus Lecture 14}
+
+\section{Valuation on a Term $X$}
+\index{Valuation|textbf}
+During the previous lecture we mentioned a function which mapped terms to nonnegative integers. Now we formalize that idea as the valuation of a term, and give some restrictions on what forms a valuation can take. A valuation on a term is a map $\v : \hbox{subterms}(X) \rightarrow \mathbb{N}^+$ satisfying two conditions:
+
+\begin{itemize}
+\item The value $\v(x) > \sum_{T\hbox{ to the right of }x}\v(T)$ in a redex in $R$. So for $(\l uU)V$, $\v(u) > \v(U)$.
+\item $\v((UV)) > \hbox{max}(\v(U),\v(V))$ and $\v(\l uU) > \v(U)$
+\end{itemize}
+
+Valuations exist for any term. Assume by recursion that
+\begin{itemize}
+  \item All leaves to the right of $x$ have values
+  \item All subterms all of value variable occurance have values themselves have values. (What?)
+\end{itemize}
+
+Given a valuation of $X$,
+\begin{equation*}
+  \# X = \sum_{Y\hbox{ a subterm of }X}\v(Y)
+\end{equation*}
+
+\subsection{Colored Reductions}
+\index{Colored Reduction|textbf}
+Select some subset $R$ of the set of redexes in a given term $X$ and color them green. Color all others red. We defined last time colored reductions $X \rightarrow X_o {{\Delta_1} \atop {\rightarrow_\beta}} X_1 {{\Delta_2} \atop {\rightarrow_\beta}} \ldots$ where $\Delta_1 \in R$, and $\Delta_2 \in$ residuals of $R$.\\
+
+\textbf{Claim:} There exists a valuation on $X_1$ induced by the reduction $X_0 {{\Delta_1} \atop {\rightarrow_\beta}}$ such that $\# X_1 < \# X_0$.\\
+
+\textbf{Proof:} Consider a redex $\Delta_1 \in R$...\\
+
+\textbf{Conclusion:} Every colored reduction sequence terminates. This gives us that every colored reduction sequence terminates in a unique ``normal form'' with no colored redexes. We call these colored reductions ``complete development.''
+
+\subsection{The Lemma of Parallel Moves}
+\index{Strip Lemma|textbf}
+This is also known as the Strip Lemma. If we have a reduction of the form
+\begin{center}
+  \begin{tikzpicture}
+    \draw (-1,-1) -- (0,0) -- (1,-1); % Left is many reductions, Right is one.
+    \draw[dashed] (-1,-1) -- (0,-2) -- (1,-1);
+  \end{tikzpicture}
+\end{center}
+
+\textbf{Remark:} Church-Rosser follows by induction on the conversion. With many and one, we can repeatedly apply until we get many and many.\\
+
+\subsection{Proof of the Strip Lemma}

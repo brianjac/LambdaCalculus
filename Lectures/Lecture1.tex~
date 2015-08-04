@@ -1,0 +1,75 @@
+\lhead{January 12, 2015}
+\chead{21-366 Lambda Calculus Lecture 1}
+
+\chapter{Lecture 1}
+
+\section{Introduction}
+John Backus\index{Backus, John} (1977) talks about functional programming\index{Functional Programming}. Hand in lecture notes at the end of the semester, as groups or singularly.
+
+\section{What is Lambda Calculus?}
+We are interested in Algebraic properties of computable functions. Why do we care about computable functions? In functional programming, computing can be thought of as writing functions as definitions and following those definitions. Alonzo Church discovered that discovered that computable functions have different algebraic properties.\\
+
+We introduce a collection of ``programs,'' which are the ``terms'' of Lambda calculus. Then we discuss the syntax of these terms. Then we discuss the idea of an equivalence relation on terms. (Actually, we discuss two.)\\
+
+\subsection{Terms of $\lambda$ calculus}
+\index{Term|textbf}
+We have constants, which are names for particular functions, and particular kinds of data. We have variables, like $x$, $y$, and $z$. Church\index{Church, Alonzo} wanted to think about a domain where there is no distinction between data and functions. If $X$ and $Y$ are both terms, then $(XY)$ is a term, read ``$X$ applied to $Y$.'' We could alternately write this as Ap $X Y$. If $X$ is a term and $x$ is a variable, then $(\l x\ X)$ is a term.\\
+
+Examples:\\
+\begin{eqnarray*}
+  x\\
+  (\l x\ x)\\
+  \\
+  x\\
+  (\l y\ x)\\
+  \\
+  (\l x\ (\l y\ x))\\
+\end{eqnarray*}
+
+\subsection{Currying}
+\index{Currying|textbf}
+If we have a function $\phi(a,b)$, then we can define $\Phi(a)$ is a function such that $\Phi(a)(b) = \phi(a,b)$. We would commonly write $\Phi(a)$ as $\Phi_a$. To each term we can associate a construction tree\index{Construction Tree}. The tree of a constant or a variable is simply tree($x$)$= x$. The tree of a term $(XY)$ would be\\
+
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$(XY)$ [ tree$(X)$ ] [ tree$(Y)$ ] ];
+  \end{tikzpicture}
+\end{center}
+
+Example:\\
+$(\l x\ (\l y\ (\l z\ ((XZ)(YZ)))))$, which is called $S$.\\
+
+\begin{center}
+  \begin{tikzpicture}[grow'=up]
+    \Tree[.$\l x\ \l y\ \l z$ [.$\l y\ \l z$ [.$\l z$ [.$((XZ)(YZ))$ [.$(XZ)$ [.$X$ ] [.$Y$ ] ] [.$(YZ)$ [.$Y$ ] [.$Z$ ] ] ] ] ] ];
+  \end{tikzpicture}
+\end{center}
+
+Many terms are defined by recursion on the construction tree.\\
+
+\textbf{Problem:} Each term has a construction tree. Prove that it is unique.\\
+
+\subsection{Parenthesis}
+\index{Parenthesis|textbf}
+A sequence of parenthesis is said to have a proper pairing\index{Proper Pairing} if there exists a bijection $\phi$ from left parenthesis to right parenthesis satisfying two conditions:
+\begin{itemize}
+  \item $\phi(l)$ is to the right of $l$.
+  \item There are no crossings. $(_1(_2)_1)_2$ is bad. $()()$ is okay, and $(_1(_2)_2)_1$ is okay.
+\end{itemize}
+\textbf{Remark:} the parenthesis from a term are properly paired.\\
+
+\noindent\textbf{Connections:} A sequence of parenthesis can be thought of as a depth-first search of a tree, thinking of a left paren as taking an edge down, and a right paren as taking an edge up.\\
+
+\noindent\textbf{Fact:} If a sequence of parens has a proper pairing, then it is unique.\\
+
+\textbf{Proof:} We can induct on the number of parens $(2n)$. If $n = 1$, then it is clear that there is only one poper pairing:
+\begin{equation*}
+  ()
+\end{equation*}
+For $n > 1$ we know there must be at least one left paren which begins the sequence. We then have a sequence of zero or more left parenthesis. The first right parenthesis we encounter must be paired with the rightmost left parenthesis:
+\begin{equation*}
+  (...(_m)_m
+\end{equation*}
+Observe that there is only one way that this first pairing can be made. $(_m$ must be paired with $)_m$. If this is not the case, then we would have a crossing, which is not allowed in a proper pairing. We remove the $m$ parenthesis, and now we have $2(n-1)$ parenthesis in our pairing. This proves our statement for $n$, assuming it has been proven for $n - 1$. Since the statement is true for $n = 1$, the statement is true for all subsequent values of $n$. \qed\\
+
+\noindent\textbf{Remark:} Count each left paren as $+1$ and each right paren as $-1$. The sequence of integers which is never negative and ends at zero.\\

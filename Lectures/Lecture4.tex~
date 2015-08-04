@@ -1,0 +1,68 @@
+\lhead{January 21, 2015}
+\chead{21-366 Lambda Calculus Lecture 4}
+
+\chapter{Lecture 4}
+
+\section{Substitution}
+\index{Substitution|textbf}
+We will use Curry's\index{Curry, Haskell} substitution prefix\index{Curry, Haskell!Curry's Substitution Prefix} (single substitution): $[X / x]Y$ read ``substitute $X$ for each free occurance of $x$ in $Y$.''\\
+%\begin{eqnarray*}
+%  [X / x]x &=& X\\
+%  [X / x]y &=& y\\
+%  [X / x](UV) &=& ([X / x]U [X /x]V)\\
+%  [X /x](\l uU) &=& \l u\[X / x\]U\ \ (u \neq x)\\
+%  [X / x](\l xU) &=& \l xU\\
+%\end{eqnarray*}
+
+Simulataneous substitution\footnote{All $x_i$ are distinct variables.}: $[X_1 / x_1, \ldots, X_n / x_n]Y$.\\
+
+Sequential substitution: $[X_{n-1} / x_{n - 1}]([X_n / x_n]Y) \neq [X_{n-1} / x_{n-1}, X_n / x_n]Y$. We can see why these are not equal by looking at this substitution: $[U / u]([V / v]Y) = [U/ u, [U / u]V / v]Y$.\\
+
+\section{What to do about Bound Variables?}
+We have the clash graph of an abstract term. Verticies are occurances of \l's in the term. An edge is between two adjacent \l's. What does it mean to assign new variables to the \l's and maintain the same abstract term such that no two \l's that are adjacent get the same variable? It affects all the variables which are bound by that \l.\\
+
+Any free variables can be bound by adding more \l's at the top. This is called a \textbf{closure}.\\
+\index{Closure}
+
+We can think of renaming the variables of the term $\l [X / x]U$ as attempting to color a graph. How many colors do we need?\\
+
+A \textbf{clique}\index{Clique} in a graph is a set of verticies such that any 2 are adjacent.
+%\begin{tikzpicture}
+  % Clique | Non-Clique
+  % o | 
+  % o--o | o  o
+  % through size 5. Note that size 5 requires one line to jump.
+%\end{tikzpicture}
+If a graph has a clique of size $n$, then you need $n$ colors to color the graph. The converse of this statement is not true. Take for example the graph of a pentagram. It has cliques of size 2, but requires 3 colors to color it.\\% Add picture here
+
+\subsection{How to rewrite a term's bound variables}
+Notice that if we take any \l{} which is closest to the frontier\footnote{That is, that it has no \l's below it.}, then all things which are adjacent to it lie above it. Now if we take any clique in the clash graph, and take any \l{} in that clique which is as close to the frontier as possible, all things adjacent to it lie above it. Additionally, all of them are adjacent to each other.\\
+
+We take the largest clique in the clash graph, and take the lowest possible \l{} and remove it. We now have a term in one less \l. Suppose now that we can rewrite the entire term with the \l{} deleted. We can do this by rewriting the bound variables recursively. If we have another clique of size $n$, we can color our lowest \l{} with the color $x$ and we then have to color the rest of the clique with $n - 1$ colors, giving us $n$ total colors. If we do not have another clique of size $n$, then we can color our lowest \l{} with $x$ and again color the rest with $n - 1$ colors. Thus our maximum number of colors is the size of the largest clique in the clash graph.\\
+
+\section{Equivalence Relations on Terms}
+\index{Equivalence Relation}
+\index{Alpha Conversion}
+\textbf{Remark:} We say that $x$ $\alpha$ converts to $Y$ if $Y$ arises from $X$ by changing bound variables.\\
+
+The equivalence relation $\beta$ conversion is based on the following: $(\l xX)Y =_\beta [Y / x]X$. This is analogous to the example of having a polynomial $p(x) = a_0 + a_1x + \ldots + a_nx^n$, and evaluating it at a point:
+\begin{equation*}
+  \hbox{Eval}(p(x),\pi) = a_0 + a_1\pi + a_2\pi^2 + \ldots + a_n\pi^n
+\end{equation*}
+
+We have another equivalence relation: $\eta$ conversion: Let $x \not\in FV(X)$.
+\index{Eta Conversion}
+\begin{equation*}
+  \l x(Xx) =_\eta X
+\end{equation*}
+
+\textbf{Remark:} General $\beta$ conversion.\index{Beta Conversion} We define as a $\beta$ redex as the term $(\l xX)Y$. Curry defined $[Y /x]X$ as the reductant or contractant. We will not use these terms. $\beta$ reduction can be represented as:
+\begin{equation*}
+  (\l xX)Y \rightarrow_\beta [Y / x]X
+\end{equation*}
+We allow ourselves to do this inside of bigger terms. We can $\beta$ reduce\index{Beta Reduction} a small term inside a bigger term to $\beta$ reduce the entire term.\\
+
+Similarly,
+\begin{equation*}
+  \l x (X x) \rightarrow_\eta X
+\end{equation*}

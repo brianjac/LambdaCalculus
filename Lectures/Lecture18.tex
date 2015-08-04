@@ -1,0 +1,75 @@
+\chapter{Lecture 18}
+\lhead{February 25, 2015}
+\chead{21-366 Lambda Calculus Lecture 18}
+\rhead{Brian Jacobs}
+
+\section{Lexicographic Orderings}
+\margnot{Alphabetic Ordering}{ The lexicographic ordering is a generalization of the idea of alphabetic ordering. Alphabetic ordering is just a lexicographic ordering where the tuple is the letters of the strings and the ordering is based on where in the alphabet letters occur.}
+A problem which sometimes arises is the problem of ordering tuples of the form $(x_0,\ldots,x_n)$ where the individual elements $x_i$ have some ordering such that we can say $x_i = x_j, x_i < x_j$ or $x_i > x_j$. There are a number of ways that we could go about this, so we start by making a list of properties that we wish lexicographic ordering to have. Ideally, our ordering will tell us that identical lists are equal and anything else is not, and be transitive.\\
+
+An obvious first approach would be to simply say that for two tuples $X$ and $Y$ we will compare the first two elments $x_0$ and $y_0$. If $x_0 > y_0$, then $X > Y$, and so forth. We have to decide, however, what to do in a case where the length of $X$ and the length of $Y$ differ, as in the case where $X = (x_0,x_1,x_2)$ and $Y = (y_0,y_1)$. We can pad one of the tuples until it is equal in length to the other with elements which are either greater or smaller than the elements of the two lists. So if the elements of $X$ and $Y$ are integers, we might say that
+\begin{equation*}
+  (x_0,x_1,x_2) \stackrel{?}{=} (y_0,y_1) \Longleftrightarrow (x_0,x_1,x_2) \stackrel{?}{=} (y_0,y_1,\infty)
+\end{equation*}
+
+\section{Definition of Principle Redex}
+We claim that if an infinite reduction sequence exists for some term, we can find it by repeatedly contracting the principle redex of the term. The principle redex is defined in the following way:
+\examplebox{Definition of Principle Redex}{
+  \begin{enumerate}[(1)]
+  \item $(\l x^{n,}X^{\alpha,n})^{n+1,\beta}$ is the principle redex of $X^{\alpha,n}$
+  \item $(U^{\alpha,n+1} V^{\beta,n})^{n,\gamma}$ is the principle redex of
+    \begin{enumerate}[(a)]
+    \item $U^{\alpha,n+1}$ if $U$ is a variable or an application and the principle redex exists, else the principle redex of $V^{\beta,n}$
+    \item if $U^{\alpha,n+1} = (\l y^{m}Y^{\delta,m})^{m+1,\alpha',n+1}$ then
+      \begin{enumerate}[(i)]
+      \item $\alpha'$ contains $0$, then the principle redex of $Y^{\delta,m}$ if it exists, else
+      \item $y \not\in \FV(Y)$ then the principle redex of $V$ if it exists, else $Y$.
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+}
+
+At this point [(1)(a)(ii)] we have a term of the form:
+\begin{equation*}
+  ((\l u^{n,}U^{\alpha,n})^{n+1,\beta,m+1}V^{\gamma,m})^{m,\delta}
+\end{equation*}
+
+\begin{enumerate}[(1)]
+  \item 0 in $\beta$
+  \item no $0$ in $\beta$, $u \not\in \FV(U)$ principlal redex to be the one for $V$ if it exists.
+  \item Potential
+\end{enumerate}
+
+\subsection{Proof of Infinte Reduction of Principle Redex}
+We want to demonstrate that the perpetual reduction strategy always contracts the principle redex.\\
+
+\textbf{Lemma:} if $X^{\alpha} \in $ SN and $Y^{\beta,n} \in $ SN where $y^n \in \FV(X)$. It then makes sense to apply $[Y^{\beta,n}/y^{n}]X^{\alpha}$.\\
+
+\textbf{Proof:} We first look at the special case of $Y^{\beta,n} = (xY_1\ldots Y_m)^{\beta,n}$. $X^{\alpha}$ is strongly normalizable, so the reduction tree of $X^\alpha$ is finite and of size $t$. $X^{\alpha}$ also has a length, $\ell$. We can induct on pairs $(t,\ell)$.
+
+\begin{center}
+  \begin{tikzpicture}
+    \draw[thick,->] (-.5,0) -- (2,0);
+    \draw[thick,->] (0,-.5) -- (0,2);
+    \draw (0,1) node[anchor=east] {$t$};
+    \draw (1,0) node[anchor=north] {$\ell$};
+  \end{tikzpicture}
+\end{center}
+
+We establish a lexicographic ordering on the points whereby $(t,\ell) > (t',\ell')$ if $t > t'$ or if $t = t'$ and $\ell > \ell'$.\\
+
+If $X = y$, then $\alpha = n,\alpha'$. So when we perform the substitution, we get
+\begin{equation*}
+  [Y^{\alpha,n}/y^n]X^{\alpha} = (xY_1\ldots Y_m)^{\beta,n,\alpha'}
+\end{equation*}
+Note that $Y^{\beta,n} \in \SN \Leftrightarrow Y_1,\ldots,Y_m \in \SN$.\\
+
+\textit{Induction Step:} We have the following cases:
+\begin{itemize}
+  \item $X = zX_1\ldots X_k$ and $z \not= y.$
+  \item $[Y/y]X = z([Y/y]X_1)\ldots([Y/y]X_{1_2})$ use $\ell$.
+  \item $X = (\l zX_0)X_1\ldots X_k$.
+  \item $[Y/y]X = (\l z [Y/y]X_0)([Y/y]X_1)\ldots([Y/y]X_k)$.
+\end{itemize}
+
+We now again have several cases: if $0$ is in the potential, then $z \not\in \FV(X_0)$  principle redex cases for $X_1$.

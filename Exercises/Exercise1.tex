@@ -1,0 +1,28 @@
+\chapter{Exercise 1}
+\lhead{\today}
+\chead{21-366 Lambda Calculus Exercise 1}
+
+\section{Problem Statement}
+We define a \textbf{pseudoterm} in the following manner:
+\begin{itemize}
+  \item A variable $x$ is a pseudoterm.
+  \item If $X$ is a pseudoterm and $x$ is a variable, then $(\l xX)$ is a pseudoterm.
+  \item If $X_1, \ldots X_n$ are pseudoterms and $x$ is a variable, then $(x\ X_1 \ldots X_n)$ is a pseudoterm.
+  \item If $X_2, \ldots X_n$ are pseudoterms and $(\l xX)$ is a pseudoterm then $((\l xX) X_1 \ldots X_n)$ is a pseudoterm.
+\end{itemize}
+Show that every pseudoterm results from a term by deleting parens around applications in function position. Note that this is slightly different from the formulation in class (deleting parens around applications not in argument position) because we are not using Church's dot notation. With dot notation, for example $(\l x (x X_1 \ldots X_n))$ becomes $(\l x . x X_1 \ldots X_n)$.
+
+\section{Proof}
+We consider the four cases of a pseudoterm enumerated in the problem statement. We will prove that each form of a pseudoterm can be constructed by removing parens around applications in function position from a term.\\
+
+\textbf{Case 1:} $x$\\
+We have a pseudoterm $x$ which we wish to construct by removing parens from a term. We take the term $x$, and remove no parens. This gives us the pseudoterm $x$. \qed\\
+
+\textbf{Case 2:} $(\l xX)$\\
+Again, we start with a term $(\l xX)$ and remove no parens to get the pseudoterm $(\l xX)$. \qed\\
+
+\textbf{Case 3:} $(x X_1\ldots X_n)$\\
+Start with the case where $n = 1$: the pseudoterm $(x X_1)$. We can derive this directly from the term $(x X_1)$ by removing no parenthesis. Now consider that we have some strategy for deriving a pseudoterm $(x X_1\ldots X_n)$ from some term $(x\overline{X})$. We can then derive a pseudoterm $(x X_1\ldots X_{n}X_{n+1})$ from a term $((x\overline{X})X_{n+1})$ by removing the parenthesis of the term in function position, $(x\overline{X})$. \qed\\
+
+\textbf{Case 4:} $((\l xX)X_1\ldots X_n)$\\
+We again start with the case where $n = 1$. This is the pseudoterm $((\l xX)X_1)$. This is also a term, so we are done. Now we assume that we have some way to derive a pseudoterm $((\l xX)X_1\ldots X_n)$ from some term $((\l xX)\overline{X})$. We can then derive the pseudoterm $((\l xX)X_1\ldots X_nX_{n+1})$ from the term $(((\l xX)\overline{X})X_{n+1})$ by removing the parenthesis around $((\l xX)\overline{X})$, which is in function position. \qqed\\

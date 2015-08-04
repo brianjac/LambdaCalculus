@@ -1,0 +1,26 @@
+\chapter{Lecture 35}
+\lhead{April 13, 2015}
+\chead{21-366 Lambda Calculus Lecture 35}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Replacement and Substitutions}
+\subsection{Kleene's Evaluator}
+\begin{equation*}
+  E_{Kleene}\godnum{M} =_{\beta} M
+\end{equation*}
+for some closed term $M$. $E$ is defined by recursion with a parameter $X$ which is a stack of the form $\langle \uline{n}, Z\rangle$ which tells us to substitute the term $Z$ for the free variable $x_n$. In pidgeon lambda calculus:\\
+
+$F\godnum{Y}X =$ if $P = K_1^3$, then find $S$ in $X = Z$ and return it if it exists else return some random term, say $\Omega$. If $P = K_2^3$, then recurse with $(FRX)(FSX)$. If $P_3^3$, then $F\godnum{Y}X$ = $\l u.FS$Push$\langle R,u\rangle$.\\
+
+Consider that things lower in the recursion will be accessed in the stack first. So the same variable can be bound int two different spots without problems.\\
+
+We then define $F$ as a fixed point and set $E = \l a.Fa\bot$. For true codes, we can see that $E\godnum{M} =_\beta M$.\\
+
+\subsection{Replacement}
+We assume that $\godnum{X}$ has comments corresponding to depth first search. We want to define a term such that $REP\godnum{X}\godnum{Y}\uline{n}$ corresponds to the replacing of the subterm $X$ with dfs number $n$ by $Y$.\\
+
+So if $P = K_1^3$, then if $Q = n$, return $\godnum{Y}$, and if $Q \not= n$, return $\godnum{X}$.
+
+\subsection{Substitution}
+$SUB\godnum{X}\godnum{Y}\uline{n} = 0$ substiutute $Y$ in $X$ for all free cocurances of $x_n$ in $X$. A question arises when bound variables are considered. $Y$ should be free for $x_n$ in $X$. $CV\godnum{X}\uline{n}$ is\footnote{$CV$ stands for conflicting variables.} a stack of variables bound on the paths to free occurances of $x_n$. If $X$ is a variable $x_k$, if $k = n$, then $\godnum{Y}$ else $\godnum{x_k}$.

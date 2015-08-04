@@ -1,0 +1,70 @@
+\chapter{Chapter 16}
+\lhead{February 20, 2015}
+\chead{21-366 Lambda Calculus Lecture 16}
+
+\section{* The Book on Levy Labels}
+TODO: find a copy of the textbook.
+
+\section{Potential of a Term}
+The potential function maps from subterms (occurances) to sequences of nonnegative integers $\alpha = n_1n_2\ldots n_k$ such that $n_{i+1} = n_i \pm 1$.\\
+
+We write $Y = Y^\alpha$. The superscript is for the potential of $Y$. This satisfies
+\begin{itemize}
+  \item (Uniformity) For every variable occurance of $x$ the potential \uline{begins} with the same integer $x^{n\alpha}$.
+  \item (Construction)
+    \begin{itemize}
+      \item Application: $(U^{\alpha,n+1}V^{\beta,n})^{n,\gamma}$
+      \item Abstraction: $(\l u^{n,} U^{\beta,n})^{n+1,\gamma}$
+    \end{itemize}
+\end{itemize}
+
+\textbf{Example:}
+\begin{equation*}
+  (\l x (x^3 x^{3,2})^{2,3})^4
+\end{equation*}
+
+\textbf{Proposition:} Every term has at least one pootential assignment where all potentials are $\geq$ any nonegative integer.\\
+
+\textbf{Proof:} Let some integer $N$ be nonnegative. We assign to each variable $x$ the potential $N + 1$. If we have $U = U^{\alpha, N+1}$ and $V = V^{\beta, N+1}$. Then
+\begin{eqnarray*}
+  (U^{\alpha,N+1}V^{\beta,N+1,N})^{N,N+1}\\
+  (\l u^{N+1}U^{\alpha,N+1})^{N+2,N+1}\\
+\end{eqnarray*}
+Beta reduction looks like:
+\begin{equation*}
+  ((\l x^{\alpha,} X^{\alpha,n})^{n+1 Y^{\beta, n}})^{n,\gamma}
+\end{equation*}
+Most generally, we could have
+\begin{equation*}
+  ((\l x^{n,} X^{\alpha,n})^{n+1,\delta,n+1} Y^{\beta,n})^{n,\gamma}
+\end{equation*}
+but we do not do this. We can simply do
+\begin{equation*}
+  ((\l x^{\alpha,} X^{\alpha,n})^{n+1 Y^{\beta, n}})^{n,\gamma} \rightarrow [Y^{\beta,n}/x^{n,}]X^{\alpha,n,\gamma}
+\end{equation*}
+
+\subsection{Potential Reduction}
+\begin{equation*}
+  (U^{\alpha,n+2,n+1}V^{\beta,n})^{n,\gamma} \rightarrow (U^{\alpha,n+2}V^{\beta,n,n+1})^{n+1,n,\gamma}
+\end{equation*}
+\begin{equation*}
+  (U^{\alpha,n+1,n+2}V^{\beta,n+1})^{n+1,\gamma} \rightarrow (U^{\alpha,n+1}V^{\beta,n+1,n})^{n,n+1,\gamma}
+\end{equation*}
+
+\textbf{Example:}
+let
+\begin{equation*}
+  \omega^4 = (\l x^3 (x^3x^{3,2})^{2,3})^4.
+\end{equation*}
+Then if we want to reduce $\Omega = \omega\omega$, we do
+\begin{eqnarray*}
+  \omega^4\omega^{4,3} &\rightarrow& (\omega^{4,3}\omega^{4,3,2})^{2,3,4} \rightarrow \omega^4 \omega^{4,3,2,3} \rightarrow \omega^{4,3,2,3}\omega^{4,3,2,3,2} \rightarrow \omega^{4,3,2} \omega^{4,3,2,3,2,1}\\
+  &\rightarrow& \omega^4 \omega^{4,3,2,3,2,1,2,3} \rightarrow \omega^{4,3,2,3,2,1,2,3}\omega^{4,3,2,3,2,1,2,3,2}\\
+  &\rightarrow& \omega^{4,3,2,3,2,1} \omega^{4,3,2,3,2,1,2,3,2,1,0}\\
+\end{eqnarray*}
+
+We now have two kinds of reductions: beta reductions and potential reductions.\\
+
+\textbf{Definition:} We say that a term with potential is \uline{strongly normalizable} if every alternating sequence of beta reductions and potential reductions terminates.\\
+
+\textbf{Theorem:} Every term is strongly normalizable.

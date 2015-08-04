@@ -1,0 +1,147 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+
+\input{../Polished/macros.tex}
+
+\lhead{February 11, 2015}
+\chead{21-366 Lambda Calculus Lecture 13}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Scary Proofs and Nice Sprites}
+\textbf{Recall:} $X$ is said to be strongly normalizable, or $X \in $ SN, if every $\beta$ reduction sequence beginning with $X$ terminates in a normal form.\\
+
+For example:
+\begin{enumerate}[(1)]
+  \item Normal terms\\
+  \item Examples which did not use fixed points\\
+  \item $Kx\Omega \rightarrow_\beta x$. This has a normal form, but it is not in SN.
+\end{enumerate}
+
+Recall: Weak diamond.
+\begin{center}
+  \begin{tikzpicture}
+    \draw[->] (0,0) -- (-1,-1);
+    \draw[dashed] (-1,-1) -- (0,-2);
+    \draw[->] (0,0) -- (1,-1);
+    \draw[dashed] (1,-1) -- (0,-2);
+  \end{tikzpicture}
+\end{center}
+
+\textbf{Proposition:} If $X \in $ SN, then by K\"onig's lemma, then the entire reduction tree of $X$ is finite, and this tree ends in a unique normal form.\\
+
+\textbf{Corollary:} if $X \in$ SN, then
+\begin{center}
+  \begin{tikzpicture} % Two headed arrows
+    \draw[thick, ->] (0,0) -- (-1,-1); % X
+    \draw[thick, ->, dashed] (-1,-1) -- (0,-2); % U
+    \draw[thick, ->] (0,0) -- (1,-1); % V
+    \draw[thick, ->, dashed] (1,-1) -- (0,-2); % W
+  \end{tikzpicture}
+\end{center}
+
+\textbf{Proof:} By induction on the size of the tree we previously diagrammed.\\
+
+\textit{Base Case:} $X$ is normal. \qed\\
+
+\textit{Induction Step:} We have a reduction
+\begin{equation*}
+  U \twoheadleftarrow_\beta(R_1) X \twoheadrightarrow_\beta(R_2) V
+\end{equation*}
+
+Case 1: $R_1,R_2$ both have length 1. Done by weak diamond. \qed\\
+
+Case 2: $R_1$ has a length greater than 1.
+\begin{equation*}
+  U \twoheadleftarrow_\beta \leftarrow_\beta X \rightarrow_\beta \twoheadrightarrow_\beta V
+\end{equation*}
+We can use weak diamond to get
+\begin{center}
+  \begin{tikzpicture} % Two headed arrows
+    \draw[thick, ->] (0,0) -- (-1,-1); % X
+    \draw[thick, ->, dashed] (-1,-1) -- (0,-2); % X_1
+    \draw[thick, ->] (0,0) -- (1,-1); % X_2
+    \draw[thick, ->, dashed] (1,-1) -- (0,-2); % Y
+    \draw[thick, ->] (-1,-1) -- (-2,-2); % U
+    \draw[thick, ->] (1,-1) -- (2,-2); % V
+  \end{tikzpicture}
+\end{center}
+Observe that $X_1$ has a smaller reduction tree than $X$. We can then use the induction hypothesis to see that $U$ and $Y$, and $V$ and $Y$ reduce to some terms $U_1$ and $V_1$:
+\begin{center}
+  \begin{tikzpicture} % Two headed arrows
+    \draw[thick, ->] (0,0) -- (-1,-1); % X
+    \draw[thick, ->, dashed] (-1,-1) -- (0,-2); % X_1
+    \draw[thick, ->] (0,0) -- (1,-1); % X_2
+    \draw[thick, ->, dashed] (1,-1) -- (0,-2); % Y
+    \draw[thick, ->] (-1,-1) -- (-2,-2); % U
+    \draw[thick, ->] (1,-1) -- (2,-2); % V
+    \draw[thick, ->, dashed] (-2,-2) -- (-1,-3); % U_1
+    \draw[thick, ->, dashed] (0,-2) -- (-1,-3);
+    \draw[thick, ->, dashed] (2,-2) -- (1,-3); % V_1
+    \draw[thick, ->, dashed] (0,-2) -- (1,-3); % V_1
+  \end{tikzpicture}
+\end{center}
+We can then finally use the induction hypothesis on $U_1$ and $V_1$:\\
+\begin{center}
+  \begin{tikzpicture} % Two headed arrows
+    \draw[thick, ->] (0,0) -- (-1,-1); % X
+    \draw[thick, ->, dashed] (-1,-1) -- (0,-2); % X_1
+    \draw[thick, ->] (0,0) -- (1,-1); % X_2
+    \draw[thick, ->, dashed] (1,-1) -- (0,-2); % Y
+    \draw[thick, ->] (-1,-1) -- (-2,-2); % U
+    \draw[thick, ->] (1,-1) -- (2,-2); % V
+    \draw[thick, ->, dashed] (-2,-2) -- (-1,-3); % U_1
+    \draw[thick, ->, dashed] (0,-2) -- (-1,-3);
+    \draw[thick, ->, dashed] (2,-2) -- (1,-3); % V_1
+    \draw[thick, ->, dashed] (0,-2) -- (1,-3); % V_1
+    \draw[thick, ->, dashed] (-1,-3) -- (0,-4); % W
+    \draw[thick, ->, dashed] (1,-3) -- (0,-4);
+  \end{tikzpicture}
+\end{center}
+
+\section{Simulating Strong Normalization}
+
+\textbf{Digression:} $\infty$ reduction paths (or perpetual reduction paths). For some $X \not\in$ SN, find a principle redex in $X$, called $\Delta$ such that the contraction of $\Delta$ results in a term $Y \not\in$ SN.\\
+
+Possible terms:
+\begin{enumerate}
+  \item The principle redex of $\l uU$ is the principle redex of $U$.
+  \item $X = X_1,\ldots X_n$ has a principle redex of $X_i$ such that $i$ is the smallest such $i$ such that a redex exists.
+  \item $X = (\l xX_0)X_1,\ldots,X_n$. If the head redex is contracted, then it is principle.
+\end{enumerate}
+The principle redex redex is
+
+\begin{enumerate}[a.]
+  \item if $x \not\in FV(X_0)$, then the principle redex of $X$ is the principle redex of $X_1$, if it exists.
+  \item else $(\l xX_0)X_1$ is the principle redex.
+\end{enumerate}
+
+\textbf{Corollary:} If $X$ is not strongly normalizable, and $Y$ results by contracting the principle redex of $X$, then $Y \not\in$ SN.\\
+
+\textbf{Definition:} Comparing redexes in $X$. Standardizations says that you should always contract a redex able on to the left of the anchor.
+
+\subsection{On Coloring Redexes (A Simulation of SN)}
+Given a term $X$, we color some (strict) subset of the redexes in $X$ green. An uncolored redex is red. If $X$ reduces to $Y$ in a single step by some green redex $\Delta$, then the redexes in $Y$ which are residuals of those in $X$ which are green get colored green. We call this a \textbf{Colored Reduction}.\\
+
+If $X \rightarrow_{\beta, colored} Y$, and $Y$ has no colored redexes, then $Y$ is said to be a complete development of green redexes in $X$.\\
+
+\textbf{Theorem (Hindley):} Every colored reduction sequence terminates in a unique normal form. Note that we have weak diamond for colored reductions.
+\begin{center}
+  \begin{tikzpicture}
+    \draw[thick, ->] (0,0) -- (-1,-1); % X
+    \draw[thick, ->, dashed] (-1,-1) -- (0,-2); % U by Delta_1
+    \draw[thick, ->] (0,0) -- (1,-1); % V by Delta_2
+    \draw[thick, ->, dashed] (1,-1) -- (0,-2); % W by residuals of Delta_1 and Delta_2
+  \end{tikzpicture}
+\end{center}
+
+\textbf{Proof:} $X \mapsto \# X$ and a colored reductionto $Y$ gives us $Y \mapsto \# Y$ for some $\#$ which associates a nonnegative integer with terms.
+\end{document}

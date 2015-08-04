@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{tikz-qtree}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem}
+
+\input{../Polished/macros.tex}
+
+\lhead{February 2, 2015}
+\chead{21-366 Lambda Calculus Lecture 9}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\begin{document}
+\section{Lists of Integers}
+Our goal now is to find the length of a list of integers.\\
+Recall that:
+\begin{eqnarray*}
+  Y_{Curry} = \l y((\l x\ y(xx))(\l x\ y(xx)))\\
+  Y_{Turing} = (\l xy . y(xxy))(\l xy . y(xxy))\\
+\end{eqnarray*}
+\begin{eqnarray*}
+  <x_1,\ldots,x_n> &=& \l a . aX_1\ldots X_n\\
+  \hbox{length}(<x_1,\ldots,x_n>) &=& n\\
+\end{eqnarray*}
+If we take our representation of nonnegative integers, and define a new encoding such that $n = n' + 1$, we can get a representation of nonnegative integers using only positive integers. This leaves us with zero as a special value, which we can use to mark the end of a list. We can then encode a list of nonnegative integers $m_1,m_2,\ldots,m_n$ as $m_1+1,m_2+1,\ldots,m_n+1,0$.\\
+
+\begin{center}\includegraphics{Silence.jpg}\end{center}
+
+\section{Simultaneous Fixed Points}
+There are more kinds of fixed points, other than the ones found by Turing and Curry. We defined a simple fixed point as
+\begin{equation*}
+  Ff =_\beta f
+\end{equation*}
+We can define simultaneous fixed points as
+\begin{eqnarray*}
+  f = Ffg = F(<f,g>K)(<f,g>K_*)\\
+  g = Gfg = G(<f,g>K_*)(<f,g>K_*)\\
+\end{eqnarray*}
+We can see that
+\begin{equation*}
+  <f,g> = \l x\ <F(<f,g>,K)(<f,g>K_*),G(<f,g>,K)(<f,g>K_*)><f,g>
+\end{equation*}
+So, we can set
+\begin{equation*}
+  f = \underbrace{Y_{Turing} (\l x <F(xK)(xK_*),G(xK)(xK_*)>)}_{\alpha}K
+\end{equation*}
+and
+\begin{equation*}
+  g = Y_{Turing} (\l x <F(xK)(xK_*),G(xK)(xK_*)>)K_*
+\end{equation*}
+We can apply
+\begin{eqnarray*}
+  \l x\ <F(<f,g>,K)(<f,g>K_*),G(<f,g>,K)(<f,g>K_*)> \alpha = <F(\alpha K,\alpha K_*), G(\alpha K, \alpha K_*)>&K& = f\\
+&K_*& = g
+\end{eqnarray*}
+
+Let $f = Ffg$ and $g = Gfg$. We will define $\Phi(g) = F(\Phi g)g$. If we take $\alpha = Y_{Turing}(\l xy . F(xy)y)$. What do we know about $\alpha$? $\alpha = \Phi = \l y\ F(\Phi y,y)$.\\
+
+What:
+\begin{equation*}
+  Y_{Turing} (\l y G(F(Y_{Turing}(\l uv.F(uv)v)y)y)y)
+\end{equation*}
+
+\section{Curry's Theorem}% TODO: Sort out which is Curry and which is Church
+\textbf{Church's version:} Consider the combinators $B,C,K,I,$ and $W$.
+\textbf{Theorem:} Every closed term $X =_\beta $ an applicative combination\footnote{A combination of applications of} $B,C,K,I,W$.
+
+Church's version is simpler, but Curry's theorem reduces the number of necessary combinators to $S, I$ and $K$.\\
+
+\textbf{Corollary:} Every term can be written, up to beta conversion, with only three bound variables. Consider that $S$ will never clash with another $S$, and $S := \l xyz.(xz)(yz)$.
+
+\subsection{Proof of Curry's Theorem}
+Proof by induction. Given a term $X$, possibly with free variables, there exists an applicative combination of $S,K,I$ and the free variables in $X$ called $X^{CL}$ such that $X^{CL} \twoheadrightarrow_\beta X$.\\
+
+We define ``bracket abstraction'' as $[x]$ such that if $U$, an applicative combination of $S, K, I$ and free variables, $(([x]U)x) \twoheadrightarrow_\beta U$.
+
+Base case. If we have $S,K,I$ or $y$, such that $y \neq x$, bracket abstraction gives us $[x]S = KS, [x]K = KK, [x]I = KI, [x]y = KY$. We have also that $[x]x = I$. We have $U = U_1,U_2$. $U_1$ and $U_2$ are already defined by the induction hypothesis, so we have
+\begin{equation*}
+  S([x]U_1)([x]U_2)
+\end{equation*}
+Applied to $x$ we get
+\begin{eqnarray*}
+  S([x]U_1)([x]U_2) x\\
+  ([x]U_1x)([x]U_2x)\\
+  U_1U_2
+\end{eqnarray*}
+\end{document}

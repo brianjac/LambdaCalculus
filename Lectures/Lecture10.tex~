@@ -1,0 +1,88 @@
+\chapter{Lecture 10}
+\lhead{February 4, 2015}
+\chead{21-366 Lambda Calculus Lecture 10}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{A Review}
+\subsection{Combinators}
+\begin{eqnarray*}
+  B &:=& \l xyz . x(yz)\\
+  C &:=& \l xyz . xzy\\
+  K &:=& \l xy . x\\
+  I &:=& \l x .x\\
+  W &:=& \l xy . xyy\\
+  S &:=& \l xyz . xz(yz)
+\end{eqnarray*}
+\subsection{Bracket Abstraction}
+\begin{equation*}
+  [x] \left\{
+  \begin{tabular}{c}
+    S\\K\\I\\y
+  \end{tabular}
+  \right. = \left\{
+  \begin{tabular}{l}
+   $KS$\\$KK$\\$KI = K_*$\\$Ky$
+  \end{tabular}
+  \right.
+\end{equation*}
+\begin{equation*}
+  [x](XY) = S([x]X)([x]Y), [x]x = I
+\end{equation*}
+$[x]X$ is defined for $X$ an applicative combinations of $S, K, I$ and variables.\\
+
+\section{Beta Conversion of Terms}
+\textbf{Lemma:} $([x]X)x \twoheadrightarrow_\beta x$.\\
+
+\textbf{Proof:} by induction on the definition of bracket abstraction. The base case is $X$ is one of $S,K,I,x$. So, $[x]x := Ix = x$, and we additionally have
+\begin{eqnarray*}
+  KSx &\rightarrow_\beta& S\\
+  KKx &\rightarrow_\beta& K\\
+  KIx &\rightarrow_\beta& I\\
+\end{eqnarray*}
+Remark: We could replace $I$ by $SKK$.
+\begin{equation*}
+  SKKx \rightarrow_\beta (Kx)(Kx) \rightarrow_\beta x
+\end{equation*}
+Inductive step: $[x](UV)x$ is by definition $S([x]U)([x]V)x \rightarrow_\beta ([x]Ux)([x]Vx)$. By the induction hypothesis, $[x]Ux \twoheadrightarrow_\beta U$ and $[x]Vx \twoheadrightarrow_\beta V$. \qqed\\
+
+We define for each term $X$ an applicative combination of $S, K,$ and the free variables of $X$ as $X^{CL}$, where the $CL$ stands for Combinatory Logic. It might be better to call it combinatory algebra, but it retains the $CL$ name for historical reasons. Dude who named them (Curry?) thought it could be a foundation for all of mathematics.\\
+
+How do we formally define $X^{CL}$?
+\begin{eqnarray*}
+  x^{CL} = x\\
+  (XY)^{CL} = (X^{CL}Y^{CL})\\
+  (\l xX)^{CL} = [x]X^{CL}
+\end{eqnarray*}
+
+\textbf{Claim:} $X^{CL} \twoheadrightarrow_\beta X$.\\
+
+\textbf{Proof:} Induction on the definition of $X^{CL}$. Base case: clear. %todo: fix this
+Induction step: Case 1: $X = (UV)$. Then $X^{CL} = (U^{CL}V^{CL})$, and by the induction hypothesis, $U^{CL} \twoheadrightarrow_\beta U$ and $V^{CL} \twoheadrightarrow_\beta V$. Case 2: $X = \l uU$. Then $X^{CL} = [u]U$. By induction on $U$, basis case: $U = V \neq u$. Then $[u]U = Kv \rightarrow_\beta \l u.v = \l u.U$. If $U = u$, then $[u]U = I = \l u.u = \l u.U$. Induction step: $U = Z_1Z_2$. $[u]U = [u](Z_1Z_2) = S([u]Z_1)([u]Z_2)$. We have now
+\begin{equation*}
+  S : \l xyu.(xu)(yu)
+\end{equation*}
+So $\l u ([u]Z_1u)([u]Z_2u)$ which reduces by our lemma to $\twoheadrightarrow_\beta \l u(Z_1Z_2) = \l u(U)$.\\
+
+Finally, $U = \l vV$. We will leave this case as an exercise. \qqed
+
+\section{Lists}
+\begin{equation*}
+  \l a . a\ \uline{m_1+1}\ \ldots\ \uline{m_n+1}\ \uline{0}
+\end{equation*}
+We compute the length function $f$.
+\begin{equation*}
+  Y_{Turing}(\underbrace{\l f \l xy. (\uline{sg}\ y)(f(\uline{s}x))x}_{L})\uline{0}
+\end{equation*}
+So we take $C_*(Y_{Turing}L)$ to cause application to a list to put the list in function position:
+\begin{equation*}
+  C_*(Y_{Turing}L\uline{0})(\l a . a(\uline{m_1+1}\ \ldots \uline{m_n+1}, \uline{0})) \rightarrow_\beta (\l a . a(\uline{m_1+1}\ \ldots \uline{m_n+1}, \uline{0}))(Y_{Turing}L\uline{0})
+\end{equation*}
+\subsection{Computing the Maximum of a List}
+Imagine that you are sent to the grocery store to get the best head of lettuce they have. We can apply a sequential algorithm to sorting the lettuce to find the best head. Pick up two heads of lettuce. Keep the better one. Pick up the next head in the sequence and compare again. Repeat until there is no more lettuce to check.
+
+\subsection{Testing our list length function}
+\begin{eqnarray*}
+  (Y_{Turing}L\uline{0} \uline{m_1+1})\\
+  \ldots % TODO: finish beta reduction to the length
+\end{eqnarray*}

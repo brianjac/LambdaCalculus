@@ -1,0 +1,155 @@
+\begin{theindex}
+
+  \item Alpha Conversion\dotfill\textbf{24}
+  \item Argument Position\dotfill15
+
+  \indexspace
+
+  \item Beta Conversion\dotfill\textbf{25}
+  \item Beta Equivalent\dotfill27
+  \item Beta Reduction\dotfill25, 26
+  \item Boole, George\dotfill35
+  \item Boolean\dotfill\textbf{30}
+  \item Boolean Operator\dotfill35
+  \item Bound Variable\dotfill\textbf{15}
+  \item Bracket Abstraction\dotfill\textbf{44}, \textbf{47}
+
+  \indexspace
+
+  \item Church, Alonzo\dotfill10
+    \subitem Church's Dot Notation\hfill\textbf{17}
+  \item Church,Alonzo
+    \subitem Church Numerals\hfill31
+  \item Church-Rosser Theorem\dotfill28, \textbf{50}
+  \item Church-Turing Thesis\dotfill10
+  \item Clash Graph\dotfill\textbf{20}
+  \item Clique\dotfill23
+  \item Closure\dotfill23
+  \item Colored Reduction\dotfill\textbf{55}, \textbf{57}
+  \item Combinator\dotfill26, 38
+  \item Conditional\dotfill35
+  \item Construction Tree\dotfill11, \textbf{14}
+  \item Curry, Haskell\dotfill22
+    \subitem Curry's Paradoxical Combinator\hfill41
+    \subitem Curry's Substitution Prefix\hfill22
+  \item Currying\dotfill\textbf{11}
+
+  \indexspace
+
+  \item Diamond Property\dotfill51
+    \subitem Strong Diamond Property\hfill\textbf{51}
+    \subitem Weak Diamond Property\hfill\textbf{51}
+
+  \indexspace
+
+  \item Equivalence Relation\dotfill\textbf{24}, 50
+  \item Eta Conversion\dotfill\textbf{24}
+  \item Eta Reduction\dotfill26
+
+  \indexspace
+
+  \item Finite Set\dotfill\textbf{32}
+  \item Fixed Point\dotfill\textbf{44}
+    \subitem Simple Fixed Point\hfill44
+    \subitem Simultaneous Fixed Point\hfill44
+  \item Free Variable\dotfill\textbf{15}
+  \item Function Position\dotfill15
+  \item Functional Programming\dotfill10
+
+  \indexspace
+
+  \item G\"odel's Fixed Point Theorem\dotfill41
+
+  \indexspace
+
+  \item Halting Problem\dotfill9
+  \item Hindley's Theorem\dotfill55
+
+  \indexspace
+
+  \item Imperative Programming\dotfill10
+  \item Integer\dotfill\textbf{31}, 43
+    \subitem Integer Addition\hfill\textbf{34}
+    \subitem Integer Multiplication\hfill\textbf{35}
+    \subitem Integer Subtraction\hfill\textbf{34}
+
+  \indexspace
+
+  \item Klop's Theorem\dotfill59
+  \item K\"onig's Lemma\dotfill\textbf{52}
+
+  \indexspace
+
+  \item Left Association\dotfill\textbf{18}
+  \item Levy labels\dotfill60
+  \item List\dotfill\textbf{39}
+    \subitem List Concatenation
+      \subsubitem textbf\hfill39
+    \subitem of Integers\hfill43
+  \item Logic Gate\dotfill35
+  \item Logical Connective\dotfill35
+  \item \L usckasevicz, Jan\dotfill17
+
+  \indexspace
+
+  \item Monus Subtraction\dotfill34
+  \item Multiplication\dotfill35
+  \item Mumbles Proof, The\dotfill\textbf{106}
+
+  \indexspace
+
+  \item Normal Term\dotfill53
+  \item Normalizable Term\dotfill53
+
+  \indexspace
+
+  \item Parenthesis\dotfill\textbf{12}
+  \item Polish Notation\dotfill17
+  \item Pop\dotfill40
+  \item Predecessor Function\dotfill37
+  \item Proper Extension\dotfill\textbf{18}
+  \item Proper Pairing\dotfill12
+  \item Push\dotfill40
+
+  \indexspace
+
+  \item Quine, Willard Van Orman\dotfill17
+
+  \indexspace
+
+  \item Recursion\dotfill\textbf{37}, 42
+  \item Redex\dotfill26
+  \item Reduction Sequence\dotfill50
+  \item Reductum\dotfill26
+
+  \indexspace
+
+  \item Sign Function\dotfill37
+  \item SKI Combinator Calculus\dotfill\textbf{44}
+  \item Stack\dotfill\textbf{40}
+  \item Strip Lemma\dotfill\textbf{57}, 59
+  \item Strong Normalizable Term\dotfill53
+  \item Substitution\dotfill\textbf{22}
+  \item Subterm\dotfill\textbf{15}
+  \item Successor Function\dotfill31
+
+  \indexspace
+
+  \item Tail\dotfill40
+  \item Tail Recursion\dotfill42
+  \item Term\dotfill\textbf{10}
+  \item Transitive Closure\dotfill27
+  \item Trichotomy Law\dotfill15
+  \item Truth Table\dotfill35
+  \item Turing's Fixed Point Combinator\dotfill41
+
+  \indexspace
+
+  \item Unbounded Search\dotfill\textbf{41}
+
+  \indexspace
+
+  \item Valuation\dotfill\textbf{57}
+  \item Von Neumann Architecture\dotfill10
+
+\end{theindex}

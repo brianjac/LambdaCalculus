@@ -1,0 +1,33 @@
+\pagestyle{empty}
+
+\begin{tikzpicture}[remember picture,overlay]
+
+  % Draw Background
+  \fill[color=coverblue] (current page.south west) rectangle (current page.north east);
+  \draw (current page.north west) node[anchor=north west] {
+    \begin{minipage}{1.29\linewidth}
+      \footnotesize\color{coverpaleblue}\input{TitlePage/lambdas.tex}
+    \end{minipage}
+  };
+
+  \draw (current page.center) node {
+    \begin{minipage}{\textwidth}
+      \begin{center}
+        \textbf{\Huge\color{txtbkwhite}21-366 Lambda Calculus}\\
+        \vspace{.1in}
+        \textbf{\large\color{txtbkwhite}Lecture Notes and Exercises}\\
+        \vspace{.3in}
+        \hspace{.5in}\includegraphics[width=2.5in]{TitlePage/lambda.png}\\
+        \vspace{.3in}
+        \textbf{\large\color{txtbkwhite}Brian Jacobs}\\
+        \vspace{.1in}
+        \textbf{\large\color{txtbkwhite}\today}\\
+        \vspace{.1in}
+        \textbf{\Huge\color{red}Revision 1.05}\\
+      \end{center}
+    \end{minipage}
+  };
+
+\end{tikzpicture}
+\pagestyle{fancy}
+\establishFont

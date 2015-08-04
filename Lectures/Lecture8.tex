@@ -1,0 +1,152 @@
+\chapter{Lecture 8}
+\lhead{January 30, 2015}
+\chead{21-366 Lambda Calculus Lecture 8}
+\pagestyle{fancy}
+
+% TODO: EXPLICITLY DEFINE PUSH
+\section{Lists}
+\index{List|textbf}
+The next data structure which we should construct is the list. Intuitively, it seems as though we should just be able to write out a set of lambda terms one after another, and call that a list. This intuition is not far off. We define the structure of a list as:
+\begin{equation*}
+  \langle X_1,\ldots,X_n\rangle = \l a. aX_1\ldots X_n
+\end{equation*}
+To be able to construct lists within lambda calculus, we can define an operator $C_*$ which takes a term to its list. As before, we are using the convention that for some term $X$, $X_* := XI$.
+\begin{equation*}
+  C_* := (\l cba.(cab))I
+\end{equation*}
+
+\examplebox{Demonstration of $C_*$}{
+  \begin{eqnarray*}
+    C_*X &=_\beta& (\l cba.(cab))IX \rightarrow_\beta \l ba.(Iab)X \rightarrow_\beta \l a.aX
+  \end{eqnarray*}
+}
+
+\subsection{Concatenation}
+\index{List!List Concatenation!textbf}
+Now that we have a method for constructing lists of length $1$, we can use them to construct lists with greater length. We can think of the list of two elements as two one-element lists joined together. This joining process is called \textbf{concatenation}. We write the concatenation of two lists $X$ and $Y$ as $X \concat Y$. We can repeat this concatenation process multiple times to build up lists of arbitrary length.\\
+
+We can use this idea of list concatenation on our list structure by defining a combinator which can take the elements of one list and append them to the second. As it turns out, the combinator $B$ does this.\\
+\examplebox{$B$ as the list concatenation combinator}{
+  Let $\alpha$ and $\beta$ be lists of the form $\alpha = \l a.a\alpha_1,\ldots,\alpha_n = \langle \alpha_1,\ldots,\alpha_n \rangle$ and $\beta = \l a.a\beta_1\ldots\beta_m = \langle \beta_1,\ldots,\beta_m \rangle$.
+  \begin{eqnarray*}
+    B\alpha\beta &=_\beta& \l xyz.x(yz)\alpha,\beta \rightarrow_\beta \l z.\alpha(\beta z)\\
+    &=_\beta& \l z. (\l a.a(\alpha_1\ldots\alpha_n))((\l a.a(\beta_1\ldots\beta_m))z)\\
+    &\rightarrow_\beta& \l z.(\l a.a(\alpha_1\ldots\alpha_n))(z(\beta_1\ldots\beta_m))\\
+    &\rightarrow_\beta& \l z.z(\beta_1\ldots\beta_m\alpha_1\ldots\alpha_n)
+  \end{eqnarray*}
+}
+
+One seeming problem with this scheme is that while we defined $\langle X_1\ldots X_n \rangle \concat \langle Y_1\ldots Y_m \rangle$ as $\langle X_1 \ldots X_n Y_1 \ldots Y_m \rangle$, when we converted into lambda terms, we ended up with
+
+\begin{equation*}
+  B\langle X_1 \ldots X_n \rangle\langle Y_1 \ldots Y_m \rangle = \langle Y_1 \ldots Y_m X_1 \ldots X_n\rangle.
+\end{equation*}
+
+This looks backwards! The key word, however, is ``looks.'' Our notation here is slightly misleading. We have written lists of the form $\langle X_1 \ldots X_n \rangle$ interchangeably with lists of the form $\l a.aX_1\ldots X_n$, but if you construct a list entirely by concatenating lists of length one, you will notice that they are constructed backwards, as $\l a.aX_n \ldots X_1$.\\
+
+\examplebox{Example: Constructing a List}{
+  \begin{eqnarray*}
+    \langle XYZ \rangle &=& \langle X \rangle \concat \langle Y \rangle \concat \langle Z \rangle = B((B(C_*X)(C_*Y))C_*Z)\\
+    &\twoheadrightarrow_\beta& B((\l a.aYX)C_*Z) \twoheadrightarrow_\beta \l a.a ZYX
+  \end{eqnarray*}
+}
+
+Since the order that a list is written on the page is really just a convention, the inversion of the convention does not affect anything substative, other than allowing us to use $B$ for concatenation instead of a more complicated combinator.
+
+\subsection{Length: An Inefficient Approach}
+\margnot{Heads and Tails}{ We call the first element of a list its \textbf{head} and the second element its \textbf{tail}.}
+This convention allows us to easily access the last element of a list. We can simply use a combinator like $K$ to ake the first term from the list and project away the rest. But what happens if we want to access the first element?\\
+
+ If we know that the length of the list is $n$, we can just remove the tail of the list $n$ times until we are left with the first element. If we do not know the length, however, this is not possible. So one option is that we could define a new list data structure which somehow encodes its length, perhaps like this: $\langle n \langle X_1,\ldots,X_n\rangle \rangle$.\\
+
+The problem with this is that it is complicated. To concatenate two lists we would have to remove their lengths, add them together, concatenate the lists, and then concatenate on the new length. We could no longer use combinators like $C_*$ and $B$. A better approach will be discussed after we develop fixed point combinators.
+
+\section{Stacks}
+\index{Stack|textbf}
+Another way to solve the problem of needing list length is to introduce a new data structure: the stack. We define first the empty stack as $E$, and the stack with one element $X_1$ as $\l a . a X_1 E$. If $L$ is a stack of length $n$, then we can create a stack of length $n + 1$ by we simply create a new list $\langle X_{n+1},L\rangle  = \l a\ aX_{n+1}L$. If we expand this list, we get:
+\begin{equation*}
+  \l a\ aX_{n+1}(\l a\ aX_n(\l a\ aX_{n-1}(\ldots(\l a\ aX_1E)\ldots)))
+\end{equation*}
+We call this operation ``push.''\index{Push} Analogously we define a ``pop''\index{Pop} operation and a ``tail''\index{Tail} operation as
+\begin{eqnarray*}
+  \langle X_{n+1},L \rangle K &=_\beta& X_{n+1}\\
+  \langle X_{n+1},L \rangle K_* &=_\beta& L\\
+\end{eqnarray*}
+But what happens if we attempt to pop from an empty list? We need to test for an empty list. Our test should take a list and if it is nonempty, return a $K$. We can do this with a test:
+\begin{equation*}
+  TEST: \l u\ u(\l zwv.K)(\l ab.K_*)
+\end{equation*}
+To make this happen, we can define $E = \l ab.K_*$.\\
+
+To confirm that this works, we will test on the list $<X,L>$.
+\begin{eqnarray*}
+  TEST\langle X,L\rangle &\rightarrow_\beta& \langle X,L\rangle (\l zwv.K)(\l ab.K_*) \rightarrow_\beta (\l zwv.K)XL(\l ab.K_*) \twoheadrightarrow_\beta K\\
+  TEST\ E &\twoheadrightarrow_\beta& E(\l xwv.K)(\l ab.K_*) \twoheadrightarrow_\beta K_*\\
+\end{eqnarray*}
+
+\section{Unbounded Search}
+\index{Unbounded Search|textbf}
+How do we search for a number? For example, say that we want to find a prime number in the list of natural numbers. In general, we write that we are looking for an $n$ such that $\Phi(n)$ is true. We can see a pattern of cases:
+\begin{eqnarray*}
+  \Phi(0) \rightarrow 0\\
+  ~\Phi(0), \Phi(1) \rightarrow 1\\
+  ~\Phi(0), ~\Phi(1), \Phi(2) \rightarrow 2\\
+  \ldots
+\end{eqnarray*}
+More generally, we can define a function:
+\begin{equation*}
+  f(x) = \left\{
+  \begin{tabular}{c l}
+    $n$ & if $\Phi(n)$\\
+    $f(n + 1)$ & otherwise\\
+  \end{tabular}
+  \right.
+\end{equation*}
+
+\subsection{G\"odel's Fixed Point Theorem}
+\index{Godel's Fixed Point Theorem@G\"odel's Fixed Point Theorem}
+G\"odel's Fixed Point Theorem asserts that 
+
+If a term $T$ has a fixed point $F$ such that $(TF) =_\beta F$, then $F$ in some way has to depend on self application, as the statement $\exists F \mid (TF) =_\beta F$ is not true in general for all $T$. This implies that $T(XX) = XX$. We can write:
+\begin{eqnarray*}
+  T(XX) &=& (XX)\\
+  (\l xT(XX))X &=& (XX)\\
+  X &=& \l x\ T(XX)\\
+  (\l x\ T(XX))(\l x\ T(XX)) &=_\beta& T((\l x\ T(XX))(\l x\ T(XX))\\
+  X &=_\beta& TX\\
+\end{eqnarray*}
+We define this as Curry's Paradoxical Combinator\index{Curry, Haskell!Curry's Paradoxical Combinator}. It is a fixed point combinator.
+\begin{equation*}
+  Y_{Curry} := \l y\ (\l x\ (y(xx)))(\l x.y(xx)) 
+\end{equation*}
+We can apply $Y_{Curry}$ to $T$.
+\begin{eqnarray*}
+  Y_{Curry}T \rightarrow_\beta (\l x\ T(xx))(\l x\ T(xx))\\
+  \rightarrow_\beta T((\l x\ T(xx))(\l x\ T(xx))) \leftarrow_\beta T(Y_{Curry}T)
+\end{eqnarray*}
+We can define as well Turing's Fixed Point Combinator\index{Turing's Fixed Point Combinator}:
+\begin{equation*}
+  Y_{Turing} = \underbrace{(\l xy . y(xxy))}_{\alpha}\underbrace{(\l xy . y(xxy))}_{\alpha}
+\end{equation*}
+What happens when we apply $Y_{Turing}$ to $T$?
+\begin{eqnarray*}
+  Y_{Turing}T \rightarrow_\beta (\l y\ y(\alpha\alpha y))T \rightarrow_\beta T(\alpha\alpha T)
+\end{eqnarray*}
+It turns out that $Y_{Turing}$ is much more useful, but $Y_{Curry}$ is easier to determine.
+
+\section{* Practical Uses for $Y$, the Fixed Point Combinator}
+One problem which arises from our current construction of $\l$ calculus is that we do not have a mechanism for recursion. When we usually think of recursion\index{Recursion}, we think of it as a function which calls itself. This is not possible yet. Notice that we would need some way of referring to a function from inside itself. We can do this by passing a function to itself as an argument. $Y$ allows us to evaluate an expression with itself as an argument. Remember that
+\begin{center}
+  Y\ g $\twoheadrightarrow_\beta$ g\ (Y\ g)
+\end{center}
+By repeatedly applying this $\beta$ reduction, we can have $g$ applied to itself as many times as we want.\\
+
+Take, for example, a function for computing the factorial of a number, \uline{fac}. In pseudocode, we can implement \uline{fac} tail recursively\index{Tail Recursion} as
+\begin{lstlisting}[language=Python]
+  def fac(n):
+     if (n == 1):
+        1
+     else:
+        n * fac(n - 1)
+\end{lstlisting}
+% TODO: finish this explanation, based on http://www.righto.com/2009/03/y-combinator-in-arc-and-java.html

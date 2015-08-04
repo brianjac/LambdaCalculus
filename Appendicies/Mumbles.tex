@@ -1,0 +1,102 @@
+\chapter{The Mumbles Proof}
+\lhead{\today}
+\chead{The Mumbles Proof}
+\index{Mumbles Proof, The|textbf}
+\textit{The following is copied pretty much verbatim from Professor Statman's writings on the subject. Basically, all I did was \LaTeX{} it and make it look pretty.}\\
+
+     Here is a proof that every reduction sequence of Levy labeled terms terminates based on Barendregt's perpetual reduction strategy.\\
+
+     I have called the proof the "Mumbles proof" because the proof originated at a pub in Mumbles, Wales in September of 1974 (Swansea mini-conference). I was there with Diederick vanDaalen, Roel deVrijer, and Jean-Jaques Levy, and as I remember it the idea of the proof is mostly mine (others might remember this differently).\\
+
+\textbf{Proposition:} If the perpetual reduction strategy terminates on $X$ then $X$ is strongly normalizable.\\
+
+\textbf{Proof:} Suppose that the perpetual reduction strategy terminates on $X$. Let $p$ be the number of steps in the reduction strategy applied to $X$ before a normal form results, and let $q$ be the length of $X$. The proof is by induction on $(p,q)$ ordered lexicographically. We distinguish two cases:\\
+
+\uline{Case 1:} $X$ has no head redex or a head redex of rank $0$. This case follows from the induction hypothesis on the second coordinate (or possibly the first coordinate).\\
+
+\uline{Case 2:} $X$ has a head redex of positive Levy rank $r$. Let
+\begin{equation*}
+  X = \l x_{1} \ldots x_{s}. (\l zZ)X_{1} \ldots X_{t}
+\end{equation*}
+We distinguish two subcases:\\
+
+\uline{Subcase 1:} $z$ does not occur free in $Z$.  We suppose that there is an infinite reduction beginning with $X$. If no residual of the head redex is ever contracted in this reduction then either there is an infinite reduction sequence beginning with $X_{1}$ or there is an infinite reduction sequence beginning with
+\begin{equation*}
+  \l x_{1} \ldots x_{s}. Z X_{2} \ldots X_{t}
+\end{equation*}
+
+Either of these alternatives contradicts the induction hypothesis applied to $p$. If some residual of the head redex is contracted then there is an infinite reduction sequence beginning with
+\begin{equation*}
+  \l x_{1} \ldots x_{s}. Z X_{2} \ldots X_{t}
+\end{equation*}
+which contradicts the induction hypothesis on $p$.\\
+
+\uline{Subcase 2:} z occurs free in $Z$. Now
+\begin{equation*}
+  X' = \l x_{1} ... x_{s}. ([X_{1}/z]Z)X_{2} ... X_{t}
+\end{equation*}
+is strongly normalizable by induction hypothesis on the 1st coordinate therefore each $X_{i}$ is strongly normalizable. If an infinite reduction sequence begins with $X$ then it either
+\begin{enumerate}[(i)]
+\item never contracts the unique residual of the head redex $(\l zZ)X_{1}$ or
+\item contracts this redex at some stage.
+\end{enumerate}
+
+The first case is impossible by the previous remark that the $X_{i}$ are strongly normalizable. In the second case we have
+\begin{eqnarray*}
+  \l zZ &\twoheadrightarrow_\beta& \l zZ'\\
+  X_{i} &\twoheadrightarrow_\beta&  X_{i}'\hbox{ for $i=1,\ldots,t$}
+\end{eqnarray*}
+and there is an infinite reduction sequence beginning with
+\begin{equation*}
+  \l x_{1} \ldots x_{s}. ([X_{1}'/z]Z')X_{2}' \ldots X_{t}'
+\end{equation*}
+but this is impossible since $X'$ is strongly normalizable and
+\begin{equation*}
+  X' \twoheadrightarrow_\beta \l x_{1} \ldots x_{s}. ([X_{1}'/z]Z')X_{2}' \ldots X_{t}'.\ \ \qqed
+\end{equation*}
+
+\vspace{.5in}
+
+\textbf{Proposition:} If the perpetual reduction strategy terminates on $X$ and $Y$ then it terminates on $[Y/x]X$.\\
+
+\textbf{Proof:} If the perpetual reduction strategy terminates on $X$ and $Y$ then $X$ and $Y$ are strongly normalizable. Let $X$ have reduction tree of size $n$ and $Y$ a reduction tree of size $m$. Moreover, let the Levy label of $Y$ be $l$, and the length of $X$ be $o$. The proof is by induction on the 4-tuple $(l,m,n,o)$ ordered lexicographically. We distinguish several cases:\\
+
+\uline{Case 1:} $X$ has a head redex with positive Levy rank. Here
+\begin{equation*}
+  X = \l x_{1} \ldots x_{r}. (\l zZ)X_{1} \ldots X_{s},
+\end{equation*}
+and we set
+\begin{equation*}
+  X' = \l x_{1} ... x_{r}. ([X_{1}/z]Z)X_{2} ... X_{s}.
+\end{equation*}
+In case $z$ is free in $Z$ the first step of the perpetual strategy on $[Y/x]X$ is
+\begin{equation*} 
+  [Y/x]X \rightarrow_\beta [Y/x]X'
+\end{equation*}
+and the triple for $[Y/x]X'$ is $(l,m,k,-)$ where $k < n$. Thus the induction hypothesis applies and the perpetual reduction strategy terminates on $[Y/x]X'$. Thus it terminates on $[Y/x]X$. In case $z$ is not free in $Z$.\\
+
+\uline{Case 2:} $X$ has a head redex with Levy rank $0$ or with a head variable different from $x$. This case follows easily from the induction hypothesis on the 4th coordinate.\\
+
+\uline{Case 3:} $x$ is the head variable of $X$. Here
+\begin{equation*}
+  X = \l x_{1} \ldots x_{r}. x X_{1} \ldots X_{s}
+\end{equation*}
+where we assume  $x X_{1}$ has Levy label $k$.\\
+
+\uline{Subcase 1:} $Y$ begins with lambda with positive Levy label. Now the case where $s = 0$ is trivial. Set $X_{i}' = [Y/x]X_{i}$.Let $x'$ be a new variable with Levy label $k$ By the induction hypothesis on the $4$th co-ordinate 
+\begin{equation*}
+  \l x_{1} \ldots x_{r}. x' X_{2}' \ldots X_{s}' X_{1}'
+\end{equation*} 
+are strongly normalizable. Let $Y = (\l z Z)^{l}$.By induction hypothesis on the first coordinate $[X_{1}^{l-1}/z]Z ^{l-1}$ is strongly normalizable. In case $z$ occurs in $Z$ the perpetual strategy terminates by induction hypothesis on the first coordinate for $[[X_{1}^{l-1}/z]Z ^{l-1}/x'] \l x_{1} \ldots x_{r}. x' X_{2}' \ldots X_{s}'$, and in case $z$ does not occur we must add that it terminates for $X_{1}'$.\\
+ 
+\uline{Subcase 2:} $Y$ begins with a head redex with positive rank. Set $X_{i}' = [Y/x]X_{i}$. Let $x'$ be a new variable with Levy label $k$. By the induction hypothesis on the 4th co-ordinate
+\begin{equation*}
+  X'= \l x_{1} \ldots x_{r}. x' X_{1}' \ldots X_{s}'
+\end{equation*} 
+is strongly normalizable. Now the next step in the perpetual strategy on $[Y/x']X'$ is the next step on the head occurrence of $Y$ in
+\begin{equation*}
+  \l x_{1} \ldots x_{r}. Y X_{1}' \ldots X_{s}'.
+\end{equation*}
+Let the result on $Y$ be $Y'$. Then the perpetual strategy on $[Y'/x']X'$ terminates by the induction hypothesis on the second coordinate (or possibly the $1$st coordinate if the Levy label of $Y'$ drops from $Y$).\\
+
+\uline{Subcase 3:} $Y$ begins with a head variable or a head redex of Levy rank $0$, or a lambda with Levy label $0$. This subcase follows from the induction hypothesis on the $4$th coordinate. \qqed

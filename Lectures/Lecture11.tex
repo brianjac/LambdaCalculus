@@ -1,0 +1,36 @@
+\chapter{Lecture 11}
+\lhead{February 6, 2015}
+\chead{21-366 Lambda Calculus Lecture 11}
+\rhead{Brian Jacobs}
+\pagestyle{fancy}
+
+\section{Even More Data Structures}
+
+\subsection{Stacks}
+The empty stack is defined as $KK_*$, or THREE. If our stack is $\l a\ aLR$, $L$ is the top, $R$ is the result of popping the stack.
+
+\subsection{Trees}
+What will we do today?
+\begin{enumerate}[(I)]
+  \item Describe the data structure
+  \item Tasks:
+    \begin{itemize}
+      \item insertion of an element
+      \item balancing the tree
+      \item finding an element in the tree
+    \end{itemize}
+  \item write an informal algorithm for finding an element in a tree
+    \begin{itemize}
+      \item write a lambda term which implements our algorithm
+    \end{itemize}
+\end{enumerate}
+
+A tree is a data structure which is comprised of leaves and internal nodes, where a leaf is defined as an ordered triple $<\hbox{TRUE}, \uline{n}, X>$ of a boolean which is true, an index number, and an object. An internal node is an ordered triple of $<\hbox{FALSE}, L, R>$ of a false boolean, a left subtree, and a right subtree.\\
+
+We provide a recursive definition of trees: $<\hbox{TRUE}, \uline{n+1}, X>$ is a tree, and $<\hbox{FALSE}, L, R>$ is a tree.\\
+
+Now we describe our algorithm: $f(x,y,z)$ where $x$ is a tree, $z$ is the item we are searching for, and $y$ is a stack of trees. If $x$ is a leaf, then $x(TWO)$ is the index. We apply $Eq(x(TWO))z$. If this is $\uline{1}$, then we want to return $x$ of 3, so we write:
+\begin{equation*}
+  Y_{Turing}(x(ONE)(Eq(x(TWO))z(x(THREE))(f\ (\hbox{TOP }y)(\hbox{POP }y)z)(f (x(TWO))(\l a\ a(x(THREE))y))))
+\end{equation*}
+We call this function as $Fx(\hbox{Empty stack}z)$.\\
